@@ -37,7 +37,7 @@
 <body>
 <div class="wrap">
   <h1>📋 The Playbook — from DealMachine to Instantly</h1>
-  <div class="sub">The whole outreach pipeline, step by step. Open this page whenever you forget where you are.</div>
+  <div class="sub">The whole outreach pipeline, step by step. Open this page whenever you forget where you are. <b>Every step is done in the normal DealMachine website + this tool — no API, no code.</b></div>
   <a class="toolLink" href="index.html">🏠 Open the List Expander tool →</a>
 
   <div class="flow">DealMachine list (free) → Export CSV → ① Expander → ② MillionVerifier → ③ Stage B → ④ Instantly</div>
@@ -65,7 +65,7 @@
       <tr><td>Private-Lender Loan</td><td><b>Mortgage 1 Is Private Lender</b> = Yes</td></tr>
       <tr><td>Tired Landlord (multifamily)</td><td>Property Type = <b>Multi Family</b> + <b>Absentee Owned</b> = Yes</td></tr>
     </table></div>
-    <div class="never">🚫 <b>NEVER add a lot-size filter in DealMachine.</b> Their lot filter is broken (silently returns wrong results) AND it kills potential leads. Lot screening happens later, locally.</div>
+    <div class="never">🚫 <b>NEVER add a lot-size filter in DealMachine — the UI's included.</b> The lot filter is silently broken in DealMachine's search engine (the UI and API share it). Proof from this account (2026-08-07): 95608 corner lots = 2,887; adding "lot ≥ 0.25 acres" = 2,764 — it removed only 4%, when real data shows only ~33% of local lots are that big. The saved search "95608 Active Corner Lots - Min 0.25 Acres" showing 2.8K is this bug in action — the true corner + active + ≥0.25 count is 23. You'd think you filtered; you didn't. Lot screening happens reliably in your downloaded CSV instead (the lot column exports correctly — only the filter is broken).</div>
     <div class="warn">⚠️ Quick Filters combine with OR by default (property matches ANY selected filter). The "Match All" toggle switches to AND. For these lists you only ever add one signal, so it rarely matters.</div>
   </div>
 
