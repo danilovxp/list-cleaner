@@ -140,6 +140,19 @@ function streetName(addr) {
   return titleCase((m ? m[1] : street).trim());
 }
 const isTrustlike = n => /\btrust\b|\bllc\b|\btr$|\bestate\b|\binc\b/.test((n || "").toLowerCase());
+const shortAddress = addr => titleCase(String(addr || "").split(",")[0].trim());
+function yearsOwned(val) {
+  // v2 copy renders "owned the property about {{years_owned}} years" — must be a NUMBER.
+  const s = String(val ?? "").trim();
+  if (!s) return "";
+  if (/^\d{1,2}$/.test(s)) return s;
+  const d = new Date(s);
+  if (!isNaN(d)) {
+    const yrs = Math.floor((Date.now() - d.getTime()) / (365.25 * 24 * 3600 * 1000));
+    return String(Math.max(yrs, 0));
+  }
+  return "";
+}
 
 /* ===== Stage A: pure expansion — NO rows dropped, no filters ===== */
 function stageA(headers, rows) {
@@ -227,11 +240,12 @@ function stageA(headers, rows) {
       if (!e) stats.rows_without_email++;
       out.push({ owner_key: "K" + String(i).padStart(5, "0"), email: e, email_rank: rank, contact_slot: slot,
                  greeting_name: greet || "there", first_name: cf, last_name: cl,
+                 address: shortAddress(prop),
                  property_address: prop, street_name: streetName(prop), segment: seg,
                  lanes: hmap.lanes ? (row[hmap.lanes] || "").trim() : "",
                  lot_sf: lotSf(hmap.lot ? row[hmap.lot] : "", hmap.lot || ""),
                  year_built: hmap.yb ? (row[hmap.yb] || "").trim() : "",
-                 years_owned: hmap.owned ? (row[hmap.owned] || "").trim() : "",
+                 years_owned: yearsOwned(hmap.owned ? row[hmap.owned] : ""),
                  do_not_email_1695: flag1695 });
       stats.rows_out++;
     };
