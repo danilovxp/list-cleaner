@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Inspector — Deal-Hunter</title>
+<style>
+  :root { --bg:#f6f7f9; --card:#fff; --ink:#1a202c; --sub:#5a6472; --line:#e2e8f0;
+          --accent:#2563eb; --ok:#16a34a; --warn:#d97706; --bad:#dc2626; }
+  @media (prefers-color-scheme: dark) {
+    :root { --bg:#0f1420; --card:#1a2030; --ink:#e8ecf3; --sub:#93a0b4; --line:#2a3347;
+            --accent:#60a5fa; --ok:#4ade80; --warn:#fbbf24; --bad:#f87171; }
+  }
+  * { box-sizing:border-box; margin:0; }
+  body { font:15px/1.5 -apple-system,'Segoe UI',Roboto,sans-serif; background:var(--bg); color:var(--ink); padding:24px; }
+  .wrap { max-width:1280px; margin:0 auto; }
+  nav { margin-bottom:16px; }
+  nav a { color:var(--accent); font-weight:700; text-decoration:none; margin-right:16px; }
+  h1 { font-size:22px; margin-bottom:4px; }
+  h2 { font-size:16px; margin-bottom:8px; }
+  .sub { color:var(--sub); margin-bottom:14px; }
+  .privacy { background:var(--card); border:1px solid var(--ok); border-radius:10px; padding:10px 14px; margin-bottom:18px; font-size:14px; }
+  .card { background:var(--card); border:1px solid var(--line); border-radius:12px; padding:20px; margin-bottom:18px; }
+  .drop { border:2px dashed var(--accent); border-radius:12px; padding:26px; text-align:center; cursor:pointer; font-weight:700; color:var(--accent); }
+  .drop.hover { background:var(--bg); }
+  .steps { font-size:13.5px; color:var(--sub); line-height:1.7; }
+  .steps code { background:var(--bg); border:1px solid var(--line); border-radius:5px; padding:0 5px; font-size:12.5px; color:var(--ink); }
+  .tabs { display:flex; flex-wrap:wrap; gap:8px; margin-bottom:12px; }
+  .tab { border:1px solid var(--line); border-radius:8px; padding:6px 12px; cursor:pointer; font-weight:700; font-size:13.5px; background:var(--bg); }
+  .tab.active { background:var(--accent); color:#fff; border-color:var(--accent); }
+  .tab .x { margin-left:8px; opacity:.7; }
+  .chips { display:flex; flex-wrap:wrap; gap:8px; margin-bottom:12px; }
+  .chip { border-radius:999px; padding:3px 12px; font-size:12.5px; font-weight:700; border:1px solid var(--line); cursor:pointer; }
+  .chip.ok { color:var(--ok); border-color:var(--ok); }
+  .chip.bad { color:var(--bad); border-color:var(--bad); }
+  .chip.warn { color:var(--warn); border-color:var(--warn); }
+  .chip.on { outline:2px solid var(--accent); }
+  .bar { display:flex; gap:10px; flex-wrap:wrap; align-items:center; margin-bottom:10px; }
+  input.search { flex:1 1 240px; padding:8px 10px; border:1px solid var(--line); border-radius:8px; background:var(--bg); color:var(--ink); }
+  .count { color:var(--sub); font-size:13.5px; }
+  .tblwrap { overflow:auto; border:1px solid var(--line); border-radius:10px; max-height:70vh; }
+  table { border-collapse:collapse; font-size:12.8px; white-space:nowrap; min-width:100%; }
+  th, td { padding:5px 9px; border-bottom:1px solid var(--line); text-align:left; }
+  th { background:var(--bg); font-weight:700; position:sticky; top:0; }
+  td.rn, th.rn { color:var(--sub); font-variant-numeric:tabular-nums; position:sticky; left:0; background:var(--card); }
+  tr.o-good td { background:color-mix(in srgb, var(--ok) 8%, transparent); }
+  tr.o-bad td { background:color-mix(in srgb, var(--bad) 8%, transparent); }
+  tr.o-warn td { background:color-mix(in srgb, var(--warn) 10%, transparent); }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <nav><a href="index.html">🏠 Expander</a><a href="playbook.html">📋 Playbook</a><a href="scoreboard.html">📊 Scoreboard</a><a href="funnel.html">📈 Funnel</a><a href="inspector.html">🔍 Inspector</a></nav>
+  <h1>🔍 Inspector — open any pipeline CSV and see every row's fate</h1>
+  <div class="sub">The <a href="funnel.html" style="color:var(--accent)">Funnel</a> shows the totals; this shows the rows behind them. Load several files at once — each gets a tab.</div>
+  <div class="privacy">🔒 <b>Files never leave your computer</b> — parsed and displayed entirely in this browser tab. Nothing is uploaded anywhere.</div>
+
+  <div class="card">
+    <div class="drop" id="drop">📂 Drop CSV files here — or click to choose</div>
+    <input type="file" id="file" accept=".csv" multiple style="display:none">
+    <div class="steps" style="margin-top:14px">
+      <b>Batch files in pipeline order</b> (in <code>~/Repos/deal-hunter-data/&lt;batch&gt;/</code>):
+      <b>1.</b> <code>lane_*.csv</code> raw DealMachine pulls, all columns →
+      <b>2.</b> <code>master_all_lanes.csv</code> merged unique properties →
+      <b>3.</b> <code>…_audit_stageA.csv</code> ⭐ fate of every property &amp; scrubbed email (kept / dropped + why) →
+      <b>4.</b> <code>…_toverify.csv</code> emails sent to MillionVerifier →
+      <b>5.</b> <code>mv_results_full.csv</code> MV verdict per email →
+      <b>6.</b> <code>…_audit_stageB.csv</code> ⭐ fate of every verified email (final list / lost to better email / dropped by MV) →
+      <b>7.</b> <code>…_instantly.csv</code> final one-row-per-person list →
+      <b>8.</b> <code>campaign_*.csv</code> per-campaign splits as uploaded.
+      The ⭐ audit files are written automatically by every pipeline run.
+    </div>
+  </div>
+
+  <div class="card" id="viewer" style="display:none">
+    <div class="tabs" id="tabs"></div>
+    <div class="chips" id="chips"></div>
+    <div class="bar">
+      <input class="search" id="search" placeholder="Search any column…">
+      <span class="count" id="count"></span>
+    </div>
+    <div class="tblwrap" id="tblwrap"></div>
+  </div>
+</div>
+
+<script>
+"use strict";
+const files = [];      // {name, headers, rows}
+let active = -1, outcomeFilter = null;
+
+function parseCSV(text) {
+  const rows = []; let row = [], cell = "", q = false;
+  for (let i = 0; i < text.length; i++) {
+    const c = text[i];
+    if (q) {
+      if (c === '"') { if (text[i+1] === '"') { cell += '"'; i++; } else q = false; }
+      else cell += c;
+    } else if (c === '"') q = true;
+    else if (c === ',') { row.push(cell); cell = ""; }
+    else if (c === '\n' || c === '\r') {
+      if (c === '\r' && text[i+1] === '\n') i++;
+      row.push(cell); cell = "";
+      if (row.length > 1 || row[0] !== "") rows.push(row);
+      row = [];
+    } else cell += c;
+  }
+  if (cell !== "" || row.length) { row.push(cell); rows.push(row); }
+  return rows;
+}
+
+function loadCsvText(name, text) {
+  const raw = parseCSV(text.replace(/^﻿/, ""));
+  if (!raw.length) return;
+  const headers = raw[0];
+  const rows = raw.slice(1).map(r => { const o = {}; headers.forEach((h, i) => o[h] = r[i] ?? ""); return o; });
+  files.push({ name, headers, rows });
+  active = files.length - 1; outcomeFilter = null;
+  render();
+}
+window.loadCsvText = loadCsvText;
+
+function outcomeClass(v) {
+  if (!v) return "";
+  if (/^(kept|in_final_list|ok|good)$/.test(v)) return "good";
+  if (/lost_to_winner|catch_all|unknown$/.test(v)) return "warn";
+  if (/^dropped|invalid|disposable/.test(v)) return "bad";
+  return "";
+}
+
+function outcomeCol(f) {
+  return f.headers.includes("outcome") ? "outcome" : (f.headers.includes("result") ? "result" : null);
+}
+
+function render() {
+  document.getElementById("viewer").style.display = files.length ? "" : "none";
+  const tabs = document.getElementById("tabs");
+  tabs.innerHTML = "";
+  files.forEach((f, i) => {
+    const t = document.createElement("div");
+    t.className = "tab" + (i === active ? " active" : "");
+    t.innerHTML = `${f.name} <span style="opacity:.75;font-weight:400">(${f.rows.length.toLocaleString()})</span><span class="x" data-x="${i}">✕</span>`;
+    t.addEventListener("click", e => {
+      if (e.target.dataset.x !== undefined) {
+        files.splice(+e.target.dataset.x, 1);
+        active = Math.min(active, files.length - 1);
+      } else { active = i; outcomeFilter = null; document.getElementById("search").value = ""; }
+      render();
+    });
+    tabs.appendChild(t);
+  });
+  if (active < 0 || !files[active]) { document.getElementById("tblwrap").innerHTML = ""; document.getElementById("chips").innerHTML = ""; return; }
+  const f = files[active], oc = outcomeCol(f);
+  const chips = document.getElementById("chips");
+  chips.innerHTML = "";
+  if (oc) {
+    const counts = {};
+    f.rows.forEach(r => { const v = r[oc] || "(blank)"; counts[v] = (counts[v] || 0) + 1; });
+    Object.entries(counts).sort((a, b) => b[1] - a[1]).forEach(([v, n]) => {
+      const c = document.createElement("span");
+      c.className = `chip ${outcomeClass(v)} ${outcomeFilter === v ? "on" : ""}`;
+      c.textContent = `${v}: ${n.toLocaleString()}`;
+      c.title = "Click to filter";
+      c.addEventListener("click", () => { outcomeFilter = outcomeFilter === v ? null : v; render(); });
+      chips.appendChild(c);
+    });
+  }
+  drawTable();
+}
+
+function drawTable() {
+  const f = files[active], oc = outcomeCol(f);
+  const needle = document.getElementById("search").value.toLowerCase();
+  let shown = f.rows.map((r, i) => [r, i + 1]);
+  if (outcomeFilter) shown = shown.filter(([r]) => (r[oc] || "(blank)") === outcomeFilter);
+  if (needle) shown = shown.filter(([r]) => f.headers.some(h => (r[h] || "").toLowerCase().includes(needle)));
+  document.getElementById("count").textContent =
+    `${shown.length.toLocaleString()} of ${f.rows.length.toLocaleString()} rows` +
+    (outcomeFilter ? ` · filter: ${outcomeFilter}` : "");
+  const cap = 5000;
+  const esc = s => String(s).replace(/&/g, "&amp;").replace(/</g, "&lt;");
+  let html = `<table><thead><tr><th class="rn">#</th>${f.headers.map(h => `<th>${esc(h)}</th>`).join("")}</tr></thead><tbody>`;
+  shown.slice(0, cap).forEach(([r, n]) => {
+    const cls = oc ? outcomeClass(r[oc]) : "";
+    html += `<tr${cls ? ` class="o-${cls}"` : ""}><td class="rn">${n}</td>${f.headers.map(h => `<td>${esc(r[h] || "")}</td>`).join("")}</tr>`;
+  });
+  html += "</tbody></table>";
+  if (shown.length > cap) html += `<div style="padding:10px" class="count">Showing first ${cap.toLocaleString()} rows — refine the search to see the rest.</div>`;
+  document.getElementById("tblwrap").innerHTML = html;
+}
+
+document.getElementById("search").addEventListener("input", drawTable);
+
+const drop = document.getElementById("drop"), fileInput = document.getElementById("file");
+drop.addEventListener("click", () => fileInput.click());
+fileInput.addEventListener("change", e => { [...e.target.files].forEach(readFile); fileInput.value = ""; });
+["dragover", "dragenter"].forEach(ev => drop.addEventListener(ev, e => { e.preventDefault(); drop.classList.add("hover"); }));
+["dragleave", "drop"].forEach(ev => drop.addEventListener(ev, e => { e.preventDefault(); drop.classList.remove("hover"); }));
+drop.addEventListener("drop", e => [...e.dataTransfer.files].forEach(readFile));
+function readFile(file) {
+  const rd = new FileReader();
+  rd.onload = () => loadCsvText(file.name, rd.result);
+  rd.readAsText(file);
+}
+</script>
+</body>
+</html>
