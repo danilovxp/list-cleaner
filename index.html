@@ -48,7 +48,7 @@
 <body>
 <div class="wrap">
   <h1>🏠 Deal-Hunter List Expander</h1>
-  <div class="sub">DealMachine export → one row per owner/contact → MillionVerifier → Instantly-ready. <b>No filters — nothing is dropped.</b> The full list goes in; the exact same list comes out, expanded with an extra row for each additional owner a property has. (Lot-size and campaign filters live in the Claude pipeline, not here.)</div>
+  <div class="sub">DealMachine export → one row per owner/contact → MillionVerifier → Instantly-ready. <b>No filters — nothing is dropped except exact duplicate emails</b> (same email listed twice keeps only its first row; the removed count is shown). The full list goes in; the same list comes out, expanded with an extra row for each additional owner a property has. (Lot-size and campaign filters live in the Claude pipeline, not here.)</div>
   <div class="privacy">🔒 <b>All processing happens in your browser.</b> No file is uploaded anywhere — lead data never leaves this computer.</div>
 
   <div class="card">
@@ -167,8 +167,10 @@ function stageA(headers, rows) {
   const isAPI = Object.keys(apiContacts).length > 0;
 
   const stats = { properties_in: 0, rows_out: 0, extra_owner_rows: 0,
-                  properties_with_2plus_owners: 0, rows_without_email: 0, civ1695_flagged: 0 };
+                  properties_with_2plus_owners: 0, rows_without_email: 0,
+                  dupe_emails_removed: 0, civ1695_flagged: 0 };
   const out = [];
+  const seen = new Set();  // exact same email twice = duplicate, keep first occurrence only
   rows.forEach((row, i) => {
     stats.properties_in++;
     const prop = (row[hmap.prop] || "").trim();
@@ -217,7 +219,7 @@ function stageA(headers, rows) {
     const slots = new Set(entries.map(e => e[4]));
     if (slots.size > 1) stats.properties_with_2plus_owners++;
     if (flag1695) stats.civ1695_flagged++;
-    for (const [rank, e, cf, cl, slot, full] of entries) {
+    const emit = (rank, e, cf, cl, slot, full) => {
       const fullname = (cf + " " + cl).trim() || full || (hmap.owner1 ? (row[hmap.owner1] || "").trim() : "");
       const greet = (cf && !isTrustlike(fullname)) ? cf : streetName(prop);
       if (!e) stats.rows_without_email++;
@@ -230,6 +232,20 @@ function stageA(headers, rows) {
                  years_owned: hmap.owned ? (row[hmap.owned] || "").trim() : "",
                  do_not_email_1695: flag1695 });
       stats.rows_out++;
+    };
+    let emitted = 0;
+    for (const [rank, e, cf, cl, slot, full] of entries) {
+      if (e) {
+        if (seen.has(e)) { stats.dupe_emails_removed++; continue; }
+        seen.add(e);
+      }
+      emit(rank, e, cf, cl, slot, full); emitted++;
+    }
+    if (!emitted) {
+      // every email on this property was a duplicate — keep the property visible
+      // with one empty-email row (full-list rule: no property ever disappears)
+      const [rank, , cf, cl, slot, full] = entries[0];
+      emit(rank, "", cf, cl, slot, full);
     }
   });
   stats.extra_owner_rows = stats.rows_out - stats.properties_in;
