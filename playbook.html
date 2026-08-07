@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Playbook — Deal-Hunter List Pipeline</title>
+<style>
+  :root { --bg:#f6f7f9; --card:#fff; --ink:#1a202c; --sub:#5a6472; --line:#e2e8f0;
+          --accent:#2563eb; --ok:#16a34a; --warn:#d97706; --bad:#dc2626; }
+  @media (prefers-color-scheme: dark) {
+    :root { --bg:#0f1420; --card:#1a2030; --ink:#e8ecf3; --sub:#93a0b4; --line:#2a3347;
+            --accent:#60a5fa; --ok:#4ade80; --warn:#fbbf24; --bad:#f87171; }
+  }
+  * { box-sizing:border-box; margin:0; }
+  body { font:15px/1.55 -apple-system,'Segoe UI',Roboto,sans-serif; background:var(--bg); color:var(--ink); padding:24px; }
+  .wrap { max-width:900px; margin:0 auto; }
+  h1 { font-size:22px; margin-bottom:4px; }
+  .sub { color:var(--sub); margin-bottom:14px; }
+  a.toolLink { display:inline-block; background:var(--accent); color:#fff; border-radius:8px; padding:8px 16px; font-weight:700; text-decoration:none; margin-bottom:20px; }
+  .flow { background:var(--card); border:1px solid var(--accent); border-radius:12px; padding:14px 18px; margin-bottom:22px; font-weight:600; overflow-x:auto; white-space:nowrap; }
+  .step { background:var(--card); border:1px solid var(--line); border-radius:12px; padding:20px; margin-bottom:18px; }
+  .step h2 { font-size:17px; margin-bottom:10px; }
+  .n { display:inline-block; background:var(--accent); color:#fff; border-radius:50%; width:26px; height:26px; text-align:center; line-height:26px; font-weight:800; margin-right:8px; }
+  .tblwrap { overflow-x:auto; border:1px solid var(--line); border-radius:10px; margin:10px 0; }
+  table { border-collapse:collapse; font-size:13.5px; width:100%; }
+  th, td { padding:6px 10px; border-bottom:1px solid var(--line); text-align:left; vertical-align:top; }
+  th { background:var(--bg); font-weight:700; }
+  code { background:var(--bg); border:1px solid var(--line); border-radius:5px; padding:1px 5px; font-size:13px; }
+  ul, ol { margin:8px 0 8px 22px; }
+  li { margin:4px 0; }
+  .warn { background:var(--card); border:1px solid var(--warn); border-radius:10px; padding:10px 14px; margin:10px 0; font-size:14px; }
+  .never { background:var(--card); border:1px solid var(--bad); border-radius:10px; padding:10px 14px; margin:10px 0; font-size:14px; }
+  .good { background:var(--card); border:1px solid var(--ok); border-radius:10px; padding:10px 14px; margin:10px 0; font-size:14px; }
+  .muted { color:var(--sub); font-size:13.5px; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>📋 The Playbook — from DealMachine to Instantly</h1>
+  <div class="sub">The whole outreach pipeline, step by step. Open this page whenever you forget where you are.</div>
+  <a class="toolLink" href="index.html">🏠 Open the List Expander tool →</a>
+
+  <div class="flow">DealMachine list (free) → Export CSV → ① Expander → ② MillionVerifier → ③ Stage B → ④ Instantly</div>
+
+  <div class="step">
+    <h2><span class="n">1</span>Build lists in DealMachine — FREE</h2>
+    <p><b>Find Properties → enter the 5 zips → add filters → Build List.</b> Building lists costs nothing; credits are only charged at export.</p>
+    <ul>
+      <li><b>Zips (always the same):</b> <code>95608</code> <code>95610</code> <code>95621</code> <code>95628</code> <code>95662</code></li>
+      <li><b>Property Type = Single Family</b> (Multi Family only for the tired-landlord list)</li>
+      <li><b>ONE motivation signal per list</b> — never mix signals, or you can't tell later which one produced the replies</li>
+    </ul>
+    <div class="tblwrap"><table>
+      <tr><th>List</th><th>The ONE filter to add (exact DealMachine name)</th></tr>
+      <tr><td>Tax Delinquent</td><td><b>Tax Delinquent</b> = Yes</td></tr>
+      <tr><td>Utility &amp; Assessment Liens</td><td><b>Lien doc type</b> → any of: ASSESSMENT LIEN · IMPROVEMENT DISTRICT LIEN · ECONOMIC LIEN</td></tr>
+      <tr><td>Expired Listings</td><td><b>Market status</b> = Expired Listings</td></tr>
+      <tr><td>Vacant Homes</td><td><b>Vacant Home</b> = Yes</td></tr>
+      <tr><td>Pre-Probate</td><td><b>Probates</b> = Yes</td></tr>
+      <tr><td>Mechanics Liens</td><td><b>Lien doc type</b> = MECHANICS LIEN</td></tr>
+      <tr><td>Tax Liens &amp; Judgments</td><td><b>Lien doc type</b> → any of: FEDERAL TAX LIEN · STATE TAX LIEN · JUDGMENT</td></tr>
+      <tr><td>Corner + Long Tenure + Absentee</td><td><b>Is Corner Lot</b> = Yes + <b>Absentee Owned</b> = Yes + <b>Last sale date</b> before ~2011</td></tr>
+      <tr><td>Poor Condition</td><td><b>Building Condition</b> → Poor · Fair · Unsound</td></tr>
+      <tr><td>Likely to Move</td><td><b>Likely To Move</b> = Yes</td></tr>
+      <tr><td>Private-Lender Loan</td><td><b>Mortgage 1 Is Private Lender</b> = Yes</td></tr>
+      <tr><td>Tired Landlord (multifamily)</td><td>Property Type = <b>Multi Family</b> + <b>Absentee Owned</b> = Yes</td></tr>
+    </table></div>
+    <div class="never">🚫 <b>NEVER add a lot-size filter in DealMachine.</b> Their lot filter is broken (silently returns wrong results) AND it kills potential leads. Lot screening happens later, locally.</div>
+    <div class="warn">⚠️ Quick Filters combine with OR by default (property matches ANY selected filter). The "Match All" toggle switches to AND. For these lists you only ever add one signal, so it rarely matters.</div>
+  </div>
+
+  <div class="step">
+    <h2><span class="n">2</span>Export the list from DealMachine — THIS is where credits are spent</h2>
+    <ol>
+      <li>Open the list → <b>Select all</b> (⇧S)</li>
+      <li>Click <b>Export</b> → Format: <b>Property List</b></li>
+      <li><b>Contact Audience: Property Owners</b> — this attaches owner names, up to 3 phones + 3 emails per contact (people credits, ~1 per contact). Leave it EMPTY only if you want a property-only export with no contact info.</li>
+      <li>Fields to tick: <b>Owner Mailing Address · Lot Size Acres · Year Built · Last Sale Date · Estimated Value · Estimated Equity % · Market Status · Zoning · Sewer · Garage Type · Parcel ID · Is Corner Lot · Building Condition · Foreclosure/Preforeclosure Status · Tax Delinquent Year</b></li>
+      <li>Download the CSV from the Inbox (bell icon) when it finishes</li>
+    </ol>
+    <div class="tblwrap"><table>
+      <tr><th>Credit rule</th><th>What it means</th></tr>
+      <tr><td>1 credit / unique property</td><td>First access this cycle; repeats are FREE until the cycle resets (the 31st)</td></tr>
+      <tr><td>1 credit / contact person</td><td>Charged when Contact Audience is selected; also deduped within the cycle</td></tr>
+      <tr><td>No rollover</td><td>20,000/month, use-or-lose. Check balance before big exports: Settings → Billing</td></tr>
+    </table></div>
+    <div class="never">🚫 <b>Budget rule: know the cost BEFORE clicking Export.</b> The dialog shows "Billable this export" — read it. A 1,000-property list with owners ≈ 2,700 credits.</div>
+  </div>
+
+  <div class="step">
+    <h2><span class="n">3</span>Expand the CSV — the <a href="index.html">List Expander tool</a>, Stage A</h2>
+    <ol>
+      <li>Choose the exported CSV → check the BEFORE table (full list, numbered rows)</li>
+      <li>Click <b>Expand</b></li>
+    </ol>
+    <p>What it does automatically — no settings, nothing to remember:</p>
+    <ul>
+      <li>Splits every property into <b>one row per owner &amp; email</b>, each with its own contact's name (a couple = two people, each greeted correctly)</li>
+      <li><b>Removes exact duplicate emails</b> (DealMachine often lists the same person twice) — count shown</li>
+      <li><b>Flags</b> pre-foreclosure owner-occupied records (<code>do_not_email_1695</code>) — kept visible, excluded later at Stage B for legal safety</li>
+      <li>Keeps EVERYTHING else — no filters, no property ever disappears</li>
+    </ul>
+    <ol start="3">
+      <li>Download <b>_toverify.csv</b></li>
+    </ol>
+    <div class="warn">⚠️ Eyeball the AFTER table for rows whose <b>market status</b> turned Active/Pending/Sold since the pull — actively-listed owners belong to their agent, and Sold means they may not own it anymore. Delete those rows from the final file before Instantly.</div>
+  </div>
+
+  <div class="step">
+    <h2><span class="n">4</span>Verify emails — MillionVerifier</h2>
+    <ol>
+      <li>Go to <b>millionverifier.com</b> → upload <code>_toverify.csv</code></li>
+      <li>Wait for verification to finish (minutes for small lists)</li>
+      <li>Download the <b>FULL results file</b> — the one that includes a <code>result</code> column with good/invalid/risky per email. Not the "good only" file!</li>
+    </ol>
+    <div class="good">✅ Why verify: sending to dead addresses = bounces = burned sending domains. Never upload an unverified list to Instantly. Verification costs pennies per email.</div>
+  </div>
+
+  <div class="step">
+    <h2><span class="n">5</span>Final list — the <a href="index.html">List Expander tool</a>, Stage B</h2>
+    <ol>
+      <li>Choose the same <code>_toverify.csv</code> + the MillionVerifier results file → <b>Run Stage B</b></li>
+      <li>Download <b>_instantly.csv</b></li>
+    </ol>
+    <p>What it does: keeps only emails MillionVerifier said are good · <b>one row per PERSON</b> with that person's best working email (a property with 2 reachable owners = 2 rows) · drops the §1695-flagged rows.</p>
+  </div>
+
+  <div class="step">
+    <h2><span class="n">6</span>Upload to Instantly — one campaign per LIST</h2>
+    <ol>
+      <li><b>One campaign per lane</b> (Tax Delinquent, Utility Liens, Expired…) — never mix lists, or you can't tell which signal works. The <code>lanes</code> column says where each row belongs.</li>
+      <li>Upload <code>_instantly.csv</code> → map custom variables: <code>greeting_name</code> · <code>street_name</code> · <code>lot_sf</code> · <code>property_address</code></li>
+      <li>Campaign settings every time: <b>open tracking OFF · click tracking OFF · ESP matching ON</b> · daily volume per the warmup ramp</li>
+      <li>Sequences: use the approved v2 library (per-segment: absentee / owner-occupant / vacant), real name + real address signature, reply-to-opt-out line in the body</li>
+    </ol>
+    <div class="never">🚫 <b>Launch gates — ALL must be true before the first real send:</b> warmup ≥ 3 full weeks (first send 2026-08-18 or later) · placement test ≥ 90% inbox · list verified through steps 4–5 · anyone who ever opted out stays suppressed forever.</div>
+  </div>
+
+  <div class="step">
+    <h2>♻️ Rhythm & rules of thumb</h2>
+    <ul>
+      <li><b>Judge no list before ~100 sends.</b> Track replies per lane; winners get refreshed/scaled next cycle, losers get retired for a bench signal.</li>
+      <li><b>Data goes stale in ~45 days</b> — export → verify → send within the same month.</li>
+      <li><b>Inbox capacity is the real constraint,</b> not credits: ~250 new contacts/month at launch ramp. Don't hoard giant lists.</li>
+      <li>Smart lists (built in the DealMachine UI) refresh daily by themselves — re-export a lane next cycle to pick up new matches (repeat properties are free within a cycle, re-billed after reset).</li>
+      <li>Questions / anything weird → ask Claude (deal-hunter skill has the full spec behind this page).</li>
+    </ul>
+  </div>
+</div>
+</body>
+</html>
