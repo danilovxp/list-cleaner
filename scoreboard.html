@@ -61,7 +61,7 @@
       <button class="b3" id="resetBtn">Reset to seed</button>
       <span class="saved" id="savedMsg"></span>
     </div>
-    <div class="muted">Rules: judge nothing under 100 sends · winners get refreshed &amp; scaled next cycle · losers get retired and replaced by a bench signal (Poor Condition · Likely to Move · Corner+Tenure+Absentee · Private-Lender · Tired-Landlord MF). Sendable = lot-qualified people with verified-ready emails from the 2026-08-06 pull; update it after each monthly pull.</div>
+    <div class="muted">Rules: judge nothing under 100 sends · winners get refreshed &amp; scaled next cycle · losers get retired and replaced by a bench signal (Poor Condition · Likely to Move · Corner+Tenure+Absentee · Private-Lender · Tired-Landlord MF). Sendable = MillionVerifier-verified people (2026-08-07 run: 1,783 emails → 1,194 ok → 746 persons); update after each monthly pull. If your saved numbers predate 8/7, "Reset to seed" loads the verified counts.</div>
   </div>
 </div>
 
@@ -69,13 +69,13 @@
 "use strict";
 const KEY = "dealHunterScoreboard_v1";
 const SEED = [
-  { lane: "Utility & Assessment Liens", sendable: 252 },
-  { lane: "Tax Delinquent", sendable: 113 },
-  { lane: "Mechanics Liens", sendable: 55 },
-  { lane: "Expired Listings", sendable: 44 },
-  { lane: "Vacant Homes", sendable: 15 },
-  { lane: "Tax Liens & Judgments", sendable: 11 },
-  { lane: "Pre-Probate", sendable: 6 },
+  { lane: "Utility & Assessment Liens", sendable: 377 },
+  { lane: "Tax Delinquent", sendable: 161 },
+  { lane: "Mechanics Liens", sendable: 87 },
+  { lane: "Expired Listings", sendable: 67 },
+  { lane: "Vacant Homes", sendable: 24 },
+  { lane: "Tax Liens & Judgments", sendable: 21 },
+  { lane: "Pre-Probate", sendable: 9 },
 ].map(r => ({ ...r, sent: 0, replies: 0, positive: 0, appts: 0, contracts: 0, verdict: "", notes: "" }));
 const NUMS = ["sendable", "sent", "replies", "positive", "appts", "contracts"];
 const VERDICTS = ["", "Scale", "Keep", "Watch", "Retire"];
