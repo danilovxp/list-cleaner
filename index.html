@@ -130,8 +130,8 @@ function findCol(headers, ...pats) {
 function lotSf(val, colname) {
   const s = String(val ?? "").replace(/,/g, "").trim(); const f = parseFloat(s);
   if (isNaN(f)) return s;
-  if ((colname || "").toLowerCase().includes("acre") || f < 20) return String(Math.round(f * 4356) * 10);
-  return String(Math.round(f));
+  if ((colname || "").toLowerCase().includes("acre") || f < 20) return (Math.round(f * 4356) * 10).toLocaleString("en-US");
+  return Math.round(f).toLocaleString("en-US");
 }
 const titleCase = s => s.replace(/\S+/g, w => w[0].toUpperCase() + w.slice(1).toLowerCase());
 function streetName(addr) {
