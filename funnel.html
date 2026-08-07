@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Funnel — Deal-Hunter</title>
+<style>
+  :root { --bg:#f6f7f9; --card:#fff; --ink:#1a202c; --sub:#5a6472; --line:#e2e8f0;
+          --accent:#2563eb; --ok:#16a34a; --warn:#d97706; --bad:#dc2626; }
+  @media (prefers-color-scheme: dark) {
+    :root { --bg:#0f1420; --card:#1a2030; --ink:#e8ecf3; --sub:#93a0b4; --line:#2a3347;
+            --accent:#60a5fa; --ok:#4ade80; --warn:#fbbf24; --bad:#f87171; }
+  }
+  * { box-sizing:border-box; margin:0; }
+  body { font:15px/1.5 -apple-system,'Segoe UI',Roboto,sans-serif; background:var(--bg); color:var(--ink); padding:24px; }
+  .wrap { max-width:1100px; margin:0 auto; }
+  nav { margin-bottom:16px; }
+  nav a { color:var(--accent); font-weight:700; text-decoration:none; margin-right:16px; }
+  h1 { font-size:22px; margin-bottom:4px; }
+  h2 { font-size:17px; margin:0 0 10px; }
+  .sub { color:var(--sub); margin-bottom:18px; }
+  .card { background:var(--card); border:1px solid var(--line); border-radius:12px; padding:20px; margin-bottom:18px; }
+  .stages { display:flex; flex-wrap:wrap; gap:0; align-items:stretch; }
+  .stage { flex:1 1 150px; min-width:150px; text-align:center; padding:14px 8px; position:relative; }
+  .stage .big { font-size:34px; font-weight:800; color:var(--accent); line-height:1.1; }
+  .stage .lbl { font-weight:700; margin-top:4px; }
+  .stage .det { color:var(--sub); font-size:12.5px; margin-top:4px; }
+  .stage:not(:last-child)::after { content:"→"; position:absolute; right:-8px; top:38%; font-size:22px; color:var(--sub); }
+  .drops { border-left:3px solid var(--bad); padding:8px 14px; margin:12px 0; font-size:14px; }
+  .drops b { color:var(--bad); }
+  .tblwrap { overflow-x:auto; border:1px solid var(--line); border-radius:10px; }
+  table { border-collapse:collapse; font-size:13.5px; width:100%; white-space:nowrap; }
+  th, td { padding:7px 10px; border-bottom:1px solid var(--line); text-align:left; }
+  th { background:var(--bg); font-weight:700; }
+  td.n { text-align:right; font-variant-numeric:tabular-nums; }
+  .muted { color:var(--sub); font-size:13.5px; margin-top:10px; }
+  .good { color:var(--ok); font-weight:700; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <nav><a href="index.html">🏠 Expander</a><a href="playbook.html">📋 Playbook</a><a href="scoreboard.html">📊 Scoreboard</a><a href="funnel.html">📈 Funnel</a></nav>
+  <h1>📈 Funnel — DealMachine → filters → MillionVerifier → Instantly</h1>
+  <div class="sub">Every batch, every drop counted — nothing silent. Claude updates this page each monthly cycle.</div>
+
+  <div class="card">
+    <h2>Batch #1 — pulled 2026-08-06 · verified &amp; loaded 2026-08-07 (all numbers file-verified)</h2>
+    <div class="stages">
+      <div class="stage"><div class="big">1,637</div><div class="lbl">Raw lane records</div><div class="det">7 DealMachine lanes</div></div>
+      <div class="stage"><div class="big">1,620</div><div class="lbl">Unique properties</div><div class="det">17 cross-lane dups merged</div></div>
+      <div class="stage"><div class="big">533</div><div class="lbl">Survive filters</div><div class="det">→ 1,783 emails to verify</div></div>
+      <div class="stage"><div class="big">1,194</div><div class="lbl">Valid emails</div><div class="det">MillionVerifier "ok" (67%)</div></div>
+      <div class="stage"><div class="big">746</div><div class="lbl">People uploaded</div><div class="det">495 properties · 1 best email each</div></div>
+    </div>
+
+    <div class="drops">
+      <b>Filter drops (1,620 → 533 properties):</b> lot &lt; 0.25 ac (buy-box gate) <b>−1,027</b> ·
+      no email on file <b>−40</b> · MLS active/pending <b>−13</b> · §1695 pre-foreclosure + owner-occupied <b>−7</b>
+      &nbsp;|&nbsp; email-level scrubs: −68 duplicate emails, −1 role email
+    </div>
+    <div class="drops">
+      <b>Verification drops (1,783 → 1,194 emails):</b> invalid <b>−189</b> · unknown <b>−177</b> · catch-all <b>−223</b>
+      (only "ok" gets uploaded — bounces burn domains). Spend: 1,392 MV credits.
+    </div>
+    <div class="drops" style="border-color:var(--ok)">
+      <b style="color:var(--ok)">Person merge (1,194 emails → 746 people):</b> same person's 2nd/3rd emails collapsed to their single best —
+      one human never gets the same pitch twice. <span class="good">300 of 746 people were reachable only through contact #2+</span> (the multi-contact win).
+    </div>
+
+    <h2 style="margin-top:16px">Uploaded to Instantly (server-verified, campaigns draft until launch)</h2>
+    <div class="tblwrap"><table>
+      <tr><th>Campaign (copy type)</th><th>Leads</th><th>Feeds from lanes</th></tr>
+      <tr><td>PHS — Big Lot (liens &amp; expired)</td><td class="n">507</td><td>utility · mechanics · tax liens · expired (lot ≥ 8,000 sf)</td></tr>
+      <tr><td>PHS — Tax Delinquent</td><td class="n">208</td><td>tax_delinquent + small-lot rejects</td></tr>
+      <tr><td>PHS — Vacant Homes</td><td class="n">24</td><td>vacant</td></tr>
+      <tr><td>PHS — Pre-Probate</td><td class="n">7</td><td>preprobate (tenure ≥ 10 yrs)</td></tr>
+      <tr><th>TOTAL</th><th style="text-align:right">746</th><th></th></tr>
+    </table></div>
+    <div class="muted">End-to-end conversion: 1,620 properties pulled → 495 emailable properties (30.5%) → 746 individual people.
+    The lot gate is the biggest cut by design — the buy box wants land. Per-lane sendable lives on the <a href="scoreboard.html" style="color:var(--accent)">Scoreboard</a>.</div>
+  </div>
+
+  <div class="card">
+    <h2>💳 What Batch #1 cost — and why "~5,000" ≠ properties</h2>
+    <div class="tblwrap"><table>
+      <tr><th>Spend</th><th>Credits</th><th>What it bought</th></tr>
+      <tr><td>DealMachine — 7 lane pulls</td><td class="n">2,042</td><td>1,637 records → 1,620 unique properties</td></tr>
+      <tr><td>DealMachine — export contact-attach</td><td class="n">2,756</td><td>skip-traced owner contacts (forced: up to 5 per property, unsuppressable — documented gotcha)</td></tr>
+      <tr><td>DealMachine — API probes &amp; tiny tests</td><td class="n">~73</td><td>endpoint validation before full runs</td></tr>
+      <tr><th>DealMachine total</th><th style="text-align:right">4,871</th><th>balance 15,129 / 20,000 · resets Aug 31, no rollover</th></tr>
+      <tr><td>MillionVerifier</td><td class="n">1,392</td><td>1,792 emails verified (9 tiny-test + 1,783 full; "unknown" results not billed)</td></tr>
+    </table></div>
+    <div class="muted"><b>Credits ≠ properties.</b> DealMachine bills 1 credit per property <b>+ 1 per attached contact</b> —
+    that's why ~4,900 credits bought 1,620 properties (with owner contact data), not 4,900 properties.
+    <b>Emails ≠ people:</b> 1,783 was emails sent to verification; one person often has 2–3 emails, and each person
+    gets exactly one — so Instantly holds <b>746 people</b>. The funnel above is the full chain.</div>
+  </div>
+
+  <div class="card">
+    <h2>Batch history</h2>
+    <div class="tblwrap"><table>
+      <tr><th>Batch</th><th>Pulled</th><th>Raw records</th><th>Unique props</th><th>After filters</th><th>Emails verified</th><th>Valid</th><th>People uploaded</th></tr>
+      <tr><td>#1</td><td>2026-08-06</td><td class="n">1,637</td><td class="n">1,620</td><td class="n">533</td><td class="n">1,783</td><td class="n">1,194 (67%)</td><td class="n">746</td></tr>
+    </table></div>
+    <div class="muted">New rows appear after each monthly new-only pull (1st of the month, approval-gated).</div>
+  </div>
+</div>
+</body>
+</html>
