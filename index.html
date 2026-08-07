@@ -35,6 +35,9 @@
   table { border-collapse:collapse; font-size:12.5px; white-space:nowrap; }
   th, td { padding:4px 9px; border-bottom:1px solid var(--line); text-align:left; max-width:230px; overflow:hidden; text-overflow:ellipsis; }
   th { background:var(--bg); position:sticky; top:0; font-weight:700; z-index:1; }
+  .rownum { position:sticky; left:0; background:var(--bg); color:var(--sub); font-weight:600;
+            text-align:right; min-width:44px; z-index:1; }
+  th.rownum { z-index:2; }
   tr.flagged td { color:var(--warn); }
   .cap { color:var(--sub); font-size:13px; margin-top:10px; }
   .filemeta { color:var(--sub); font-size:13.5px; margin-left:10px; }
@@ -271,12 +274,12 @@ function renderStats(el, stats) {
   el.innerHTML = Object.entries(stats).map(([k, v]) =>
     `<div class="stat ${DROPS.has(k) ? "drop" : FLAGS.has(k) ? "flag" : "keep"}"><b>${v.toLocaleString()}</b><span>${k.replace(/_/g," ")}</span></div>`).join("");
 }
-function renderTable(el, headers, rows) {  // FULL list, scrollable
-  const parts = ["<table><thead><tr>", ...headers.map(h => `<th>${h}</th>`), "</tr></thead><tbody>"];
-  for (const r of rows) {
+function renderTable(el, headers, rows) {  // FULL list, scrollable, numbered rows
+  const parts = ['<table><thead><tr><th class="rownum">#</th>', ...headers.map(h => `<th>${h}</th>`), "</tr></thead><tbody>"];
+  rows.forEach((r, i) => {
     const cls = (r.do_not_email_1695 || "").toUpperCase() === "YES" ? ' class="flagged"' : "";
-    parts.push(`<tr${cls}>`, ...headers.map(h => `<td>${String(r[h] ?? "")}</td>`), "</tr>");
-  }
+    parts.push(`<tr${cls}><td class="rownum">${i + 1}</td>`, ...headers.map(h => `<td>${String(r[h] ?? "")}</td>`), "</tr>");
+  });
   parts.push("</tbody></table>");
   el.innerHTML = parts.join("");
 }
