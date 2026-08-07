@@ -129,7 +129,7 @@
   <div class="step">
     <h2><span class="n">6</span>Upload to Instantly — one campaign per LIST</h2>
     <ol>
-      <li><b>One campaign per lane</b> (Tax Delinquent, Utility Liens, Expired…) — never mix lists, or you can't tell which signal works. The <code>lanes</code> column says where each row belongs.</li>
+      <li><b>4 campaigns, one per COPY TYPE:</b> Big Lot (takes utility liens, mechanics liens, tax liens &amp; judgments, expired — lot ≥ 8,000 sq ft only) · Tax Delinquent (also takes small-lot rejects) · Vacant · Pre-Probate. Upload as many small CSVs into a campaign as you like — leads just accumulate. Per-list results still tracked: every lead carries its <code>lanes</code> tag, and Claude computes per-list reply stats monthly.</li>
       <li>Upload <code>_instantly.csv</code> → map custom variables: <code>greeting_name</code> · <code>street_name</code> · <code>lot_sf</code> · <code>property_address</code> → <b>enable the duplicate-skip option</b> (don't import leads already in the workspace) so nobody can ever be emailed twice</li>
       <li>Campaign settings every time: <b>open tracking OFF · click tracking OFF · ESP matching ON</b> · daily volume per the warmup ramp</li>
       <li>Sequences: use the approved v2 library (per-segment: absentee / owner-occupant / vacant), real name + real address signature, reply-to-opt-out line in the body</li>
@@ -148,7 +148,7 @@
       <tr><th>When</th><th>What</th><th>Who</th></tr>
       <tr><td><b>1st–3rd</b> (credits reset on the 31st)</td><td>Monthly pull: say "monthly pull" to Claude → free new-only counts per lane → approve the cost (typically small — only NEW records bill) → pull runs. Smart lists in the UI refresh themselves daily, so the new matches are already waiting.</td><td>Vlad approves, Claude pulls</td></tr>
       <tr><td><b>3rd–5th</b></td><td>Process: Expander → MillionVerifier → Stage B (steps 3–5 above)</td><td>Vlad (or drop files to Claude)</td></tr>
-      <tr><td><b>~5th</b></td><td>Upload each lane's new rows as ADDITIONS to its existing campaign (duplicate-skip ON). Sequences start automatically.</td><td>Vlad</td></tr>
+      <tr><td><b>~5th</b></td><td>Upload new rows as ADDITIONS to the matching copy-type campaign (duplicate-skip ON). Small CSVs are fine — they accumulate. Sequences start automatically.</td><td>Vlad</td></tr>
       <tr><td><b>All month</b></td><td>Handle replies (Claude drafts, Vlad sends) · opt-outs → blocklist immediately</td><td>Both</td></tr>
       <tr><td><b>Month end</b></td><td>Scoreboard: record Sent / Replies / Positive per lane. Lanes with 100+ total sends get a verdict — winners scale, losers get replaced by a bench signal (Poor Condition, Likely to Move, Private-Lender…)</td><td>Claude computes, Vlad decides</td></tr>
     </table></div>
