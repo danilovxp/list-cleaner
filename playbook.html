@@ -36,6 +36,7 @@
 </head>
 <body>
 <div class="wrap">
+  <nav style="margin-bottom:14px"><a href="index.html" style="color:var(--accent);font-weight:700;text-decoration:none;margin-right:16px">🏠 Expander</a><a href="playbook.html" style="color:var(--accent);font-weight:700;text-decoration:none;margin-right:16px">📋 Playbook</a><a href="scoreboard.html" style="color:var(--accent);font-weight:700;text-decoration:none">📊 Scoreboard</a></nav>
   <h1>📋 The Playbook — from DealMachine to Instantly</h1>
   <div class="sub">The whole outreach pipeline, step by step. Open this page whenever you forget where you are. <b>Every step is done in the normal DealMachine website + this tool — no API, no code.</b></div>
   <a class="toolLink" href="index.html">🏠 Open the List Expander tool →</a>
@@ -129,7 +130,7 @@
     <h2><span class="n">6</span>Upload to Instantly — one campaign per LIST</h2>
     <ol>
       <li><b>One campaign per lane</b> (Tax Delinquent, Utility Liens, Expired…) — never mix lists, or you can't tell which signal works. The <code>lanes</code> column says where each row belongs.</li>
-      <li>Upload <code>_instantly.csv</code> → map custom variables: <code>greeting_name</code> · <code>street_name</code> · <code>lot_sf</code> · <code>property_address</code></li>
+      <li>Upload <code>_instantly.csv</code> → map custom variables: <code>greeting_name</code> · <code>street_name</code> · <code>lot_sf</code> · <code>property_address</code> → <b>enable the duplicate-skip option</b> (don't import leads already in the workspace) so nobody can ever be emailed twice</li>
       <li>Campaign settings every time: <b>open tracking OFF · click tracking OFF · ESP matching ON</b> · daily volume per the warmup ramp</li>
       <li>Sequences: use the approved v2 library (per-segment: absentee / owner-occupant / vacant), real name + real address signature, reply-to-opt-out line in the body</li>
     </ol>
@@ -137,13 +138,27 @@
   </div>
 
   <div class="step">
-    <h2>♻️ Rhythm & rules of thumb</h2>
+    <h2>♻️ THE MONTHLY CYCLE — only NEW properties, every month</h2>
+    <p>Nobody ever gets emailed twice. Each month's outreach targets only properties never contacted before. Two safety layers make that true:</p>
     <ul>
-      <li><b>Judge no list before ~100 sends.</b> Track replies per lane; winners get refreshed/scaled next cycle, losers get retired for a bench signal.</li>
-      <li><b>Data goes stale in ~45 days</b> — export → verify → send within the same month.</li>
-      <li><b>Inbox capacity is the real constraint,</b> not credits: ~250 new contacts/month at launch ramp. Don't hoard giant lists.</li>
-      <li>Smart lists (built in the DealMachine UI) refresh daily by themselves — re-export a lane next cycle to pick up new matches (repeat properties are free within a cycle, re-billed after reset).</li>
-      <li>Questions / anything weird → ask Claude (deal-hunter skill has the full spec behind this page).</li>
+      <li><b>DealMachine layer:</b> monthly pulls use "<b>exclude previously exported</b>" — only never-before-exported properties come out (and only they cost credits). Verified working on this account.</li>
+      <li><b>Instantly layer (safety net):</b> at upload, enable the option to <b>skip leads that already exist in the workspace/other campaigns</b> — even if a duplicate slips through, Instantly won't email it. Opt-outs go to the blocklist forever.</li>
+    </ul>
+    <div class="tblwrap"><table>
+      <tr><th>When</th><th>What</th><th>Who</th></tr>
+      <tr><td><b>1st–3rd</b> (credits reset on the 31st)</td><td>Monthly pull: say "monthly pull" to Claude → free new-only counts per lane → approve the cost (typically small — only NEW records bill) → pull runs. Smart lists in the UI refresh themselves daily, so the new matches are already waiting.</td><td>Vlad approves, Claude pulls</td></tr>
+      <tr><td><b>3rd–5th</b></td><td>Process: Expander → MillionVerifier → Stage B (steps 3–5 above)</td><td>Vlad (or drop files to Claude)</td></tr>
+      <tr><td><b>~5th</b></td><td>Upload each lane's new rows as ADDITIONS to its existing campaign (duplicate-skip ON). Sequences start automatically.</td><td>Vlad</td></tr>
+      <tr><td><b>All month</b></td><td>Handle replies (Claude drafts, Vlad sends) · opt-outs → blocklist immediately</td><td>Both</td></tr>
+      <tr><td><b>Month end</b></td><td>Scoreboard: record Sent / Replies / Positive per lane. Lanes with 100+ total sends get a verdict — winners scale, losers get replaced by a bench signal (Poor Condition, Likely to Move, Private-Lender…)</td><td>Claude computes, Vlad decides</td></tr>
+    </table></div>
+    <p class="muted"><b>Expected monthly inflow:</b> expired listings renew constantly (~30–60/mo in the 5 zips); liens and probates trickle in; tax-delinquent updates in bulk once a year. Raw new ≈ 100–300/mo → after lot + email + verification ≈ 40–120 sendable — which matches inbox capacity (~250 contact-starts/mo at the launch ramp). <b>August is pre-loaded:</b> the first batch (already pulled, ~490 sendable people) covers month 1; the new-only rhythm starts September 1.</p>
+    <h2 style="margin-top:18px">Rules of thumb</h2>
+    <ul>
+      <li><b>Judge no list before ~100 sends.</b></li>
+      <li><b>Data goes stale in ~45 days</b> — export → verify → send within the same month, never hoard.</li>
+      <li><b>Inbox capacity is the real constraint,</b> not credits. Scale mailboxes before scaling lists.</li>
+      <li>Questions / anything weird → ask Claude (the deal-hunter skill has the full spec behind this page).</li>
     </ul>
   </div>
 </div>

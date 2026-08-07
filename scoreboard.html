@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Scoreboard — Deal-Hunter</title>
+<style>
+  :root { --bg:#f6f7f9; --card:#fff; --ink:#1a202c; --sub:#5a6472; --line:#e2e8f0;
+          --accent:#2563eb; --ok:#16a34a; --warn:#d97706; --bad:#dc2626; }
+  @media (prefers-color-scheme: dark) {
+    :root { --bg:#0f1420; --card:#1a2030; --ink:#e8ecf3; --sub:#93a0b4; --line:#2a3347;
+            --accent:#60a5fa; --ok:#4ade80; --warn:#fbbf24; --bad:#f87171; }
+  }
+  * { box-sizing:border-box; margin:0; }
+  body { font:15px/1.5 -apple-system,'Segoe UI',Roboto,sans-serif; background:var(--bg); color:var(--ink); padding:24px; }
+  .wrap { max-width:1100px; margin:0 auto; }
+  nav { margin-bottom:16px; }
+  nav a { color:var(--accent); font-weight:700; text-decoration:none; margin-right:16px; }
+  h1 { font-size:22px; margin-bottom:4px; }
+  .sub { color:var(--sub); margin-bottom:14px; }
+  .privacy { background:var(--card); border:1px solid var(--ok); border-radius:10px; padding:10px 14px; margin-bottom:18px; font-size:14px; }
+  .card { background:var(--card); border:1px solid var(--line); border-radius:12px; padding:20px; margin-bottom:18px; }
+  .tblwrap { overflow-x:auto; border:1px solid var(--line); border-radius:10px; }
+  table { border-collapse:collapse; font-size:13.5px; width:100%; white-space:nowrap; }
+  th, td { padding:6px 10px; border-bottom:1px solid var(--line); text-align:left; }
+  th { background:var(--bg); font-weight:700; }
+  td.num input { width:64px; padding:3px 6px; border:1px solid var(--line); border-radius:6px;
+                 background:var(--bg); color:var(--ink); font-size:13.5px; text-align:right; }
+  td.auto { color:var(--sub); font-weight:700; }
+  select { padding:3px 6px; border:1px solid var(--line); border-radius:6px; background:var(--bg); color:var(--ink); }
+  input.notes { width:180px; padding:3px 6px; border:1px solid var(--line); border-radius:6px; background:var(--bg); color:var(--ink); font-size:13px; }
+  .btns { margin-top:14px; display:flex; gap:10px; flex-wrap:wrap; }
+  button { border:0; border-radius:8px; padding:9px 16px; font-weight:700; cursor:pointer; color:#fff; }
+  .b1 { background:var(--accent); } .b2 { background:var(--sub); } .b3 { background:var(--bad); }
+  .saved { color:var(--ok); font-size:13px; margin-left:6px; }
+  .muted { color:var(--sub); font-size:13.5px; margin-top:10px; }
+  .verdict-scale { color:var(--ok); font-weight:700; }
+  .verdict-retire { color:var(--bad); font-weight:700; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <nav><a href="index.html">🏠 Expander</a><a href="playbook.html">📋 Playbook</a><a href="scoreboard.html">📊 Scoreboard</a></nav>
+  <h1>📊 Scoreboard — which motivation signal makes money?</h1>
+  <div class="sub">One row per list. Fill Sent / Replies / Positive from Instantly analytics (each lane = its own campaign). Verdict unlocks at 100 sends.</div>
+  <div class="privacy">🔒 <b>Your numbers live only in this browser</b> (localStorage) — the public page contains no data. Use Export for a backup you can re-Import on another machine.</div>
+
+  <div class="card">
+    <div class="tblwrap"><table id="tbl">
+      <thead><tr>
+        <th>Lane</th><th>Sendable</th><th>Sent</th><th>Replies</th><th>Positive</th><th>Appts</th><th>Contracts</th>
+        <th>Reply %</th><th>Positive %</th><th>Verdict</th><th>Notes</th>
+      </tr></thead>
+      <tbody></tbody>
+    </table></div>
+    <div class="btns">
+      <button class="b1" id="exportBtn">⬇ Export backup (JSON)</button>
+      <button class="b2" id="importBtn">⬆ Import backup</button>
+      <input type="file" id="importFile" accept=".json" style="display:none">
+      <button class="b1" id="csvBtn">⬇ Download CSV</button>
+      <button class="b3" id="resetBtn">Reset to seed</button>
+      <span class="saved" id="savedMsg"></span>
+    </div>
+    <div class="muted">Rules: judge nothing under 100 sends · winners get refreshed &amp; scaled next cycle · losers get retired and replaced by a bench signal (Poor Condition · Likely to Move · Corner+Tenure+Absentee · Private-Lender · Tired-Landlord MF). Sendable = lot-qualified people with verified-ready emails from the 2026-08-06 pull; update it after each monthly pull.</div>
+  </div>
+</div>
+
+<script>
+"use strict";
+const KEY = "dealHunterScoreboard_v1";
+const SEED = [
+  { lane: "Utility & Assessment Liens", sendable: 252 },
+  { lane: "Tax Delinquent", sendable: 113 },
+  { lane: "Mechanics Liens", sendable: 55 },
+  { lane: "Expired Listings", sendable: 44 },
+  { lane: "Vacant Homes", sendable: 15 },
+  { lane: "Tax Liens & Judgments", sendable: 11 },
+  { lane: "Pre-Probate", sendable: 6 },
+].map(r => ({ ...r, sent: 0, replies: 0, positive: 0, appts: 0, contracts: 0, verdict: "", notes: "" }));
+const NUMS = ["sendable", "sent", "replies", "positive", "appts", "contracts"];
+const VERDICTS = ["", "Scale", "Keep", "Watch", "Retire"];
+
+let data = load();
+function load() {
+  try { const d = JSON.parse(localStorage.getItem(KEY)); if (Array.isArray(d) && d.length) return d; } catch (e) {}
+  return JSON.parse(JSON.stringify(SEED));
+}
+function save() {
+  localStorage.setItem(KEY, JSON.stringify(data));
+  const m = document.getElementById("savedMsg");
+  m.textContent = "saved ✓";
+  clearTimeout(save.t); save.t = setTimeout(() => m.textContent = "", 1500);
+}
+function pct(a, b) { return b > 0 ? (100 * a / b).toFixed(1) + "%" : "—"; }
+function render() {
+  const tb = document.querySelector("#tbl tbody");
+  tb.innerHTML = "";
+  data.forEach((r, i) => {
+    const tr = document.createElement("tr");
+    const verdictHint = r.sent >= 100 ? "" : ` (unlocks at 100 sends — ${r.sent}/100)`;
+    tr.innerHTML =
+      `<td><b>${r.lane}</b></td>` +
+      NUMS.map(k => `<td class="num"><input type="number" min="0" data-i="${i}" data-k="${k}" value="${r[k]}"></td>`).join("") +
+      `<td class="auto">${pct(r.replies, r.sent)}</td>` +
+      `<td class="auto">${pct(r.positive, r.sent)}</td>` +
+      `<td><select data-i="${i}" ${r.sent < 100 ? "disabled" : ""} title="Verdict${verdictHint}">` +
+        VERDICTS.map(v => `<option value="${v}" ${r.verdict === v ? "selected" : ""}>${v || "—"}</option>`).join("") +
+      `</select></td>` +
+      `<td><input class="notes" data-i="${i}" data-k="notes" value="${(r.notes || "").replace(/"/g, "&quot;")}" placeholder="e.g. seq v2, started 8/18"></td>`;
+    tb.appendChild(tr);
+  });
+  tb.querySelectorAll("input[type=number]").forEach(inp => inp.addEventListener("input", e => {
+    const { i, k } = e.target.dataset;
+    data[i][k] = parseInt(e.target.value || "0", 10);
+    save(); refreshAutos();
+  }));
+  tb.querySelectorAll("select").forEach(sel => sel.addEventListener("change", e => {
+    data[e.target.dataset.i].verdict = e.target.value; save(); render();
+  }));
+  tb.querySelectorAll("input.notes").forEach(inp => inp.addEventListener("input", e => {
+    data[e.target.dataset.i].notes = e.target.value; save();
+  }));
+}
+function refreshAutos() {
+  // re-render percentage cells + verdict lock without losing input focus
+  const rows = document.querySelectorAll("#tbl tbody tr");
+  rows.forEach((tr, i) => {
+    const autos = tr.querySelectorAll("td.auto");
+    autos[0].textContent = pct(data[i].replies, data[i].sent);
+    autos[1].textContent = pct(data[i].positive, data[i].sent);
+    tr.querySelector("select").disabled = data[i].sent < 100;
+  });
+}
+document.getElementById("exportBtn").addEventListener("click", () => {
+  const blob = new Blob([JSON.stringify(data, null, 1)], { type: "application/json" });
+  const a = document.createElement("a");
+  a.href = URL.createObjectURL(blob); a.download = "scoreboard-backup.json"; a.click();
+  URL.revokeObjectURL(a.href);
+});
+document.getElementById("importBtn").addEventListener("click", () => document.getElementById("importFile").click());
+document.getElementById("importFile").addEventListener("change", e => {
+  const f = e.target.files[0]; if (!f) return;
+  const rd = new FileReader();
+  rd.onload = () => { try { data = JSON.parse(rd.result); save(); render(); } catch (err) { alert("Not a valid backup file"); } };
+  rd.readAsText(f);
+});
+document.getElementById("csvBtn").addEventListener("click", () => {
+  const hdr = ["lane", ...NUMS, "reply_pct", "positive_pct", "verdict", "notes"];
+  const lines = [hdr.join(",")].concat(data.map(r =>
+    [`"${r.lane}"`, ...NUMS.map(k => r[k]), pct(r.replies, r.sent), pct(r.positive, r.sent), r.verdict, `"${(r.notes || "").replace(/"/g, '""')}"`].join(",")));
+  const blob = new Blob([lines.join("\r\n")], { type: "text/csv" });
+  const a = document.createElement("a");
+  a.href = URL.createObjectURL(blob); a.download = "scoreboard.csv"; a.click();
+  URL.revokeObjectURL(a.href);
+});
+document.getElementById("resetBtn").addEventListener("click", () => {
+  if (confirm("Reset ALL scoreboard data to the original seed? Your entered numbers will be lost.")) {
+    data = JSON.parse(JSON.stringify(SEED)); save(); render();
+  }
+});
+render();
+</script>
+</body>
+</html>
