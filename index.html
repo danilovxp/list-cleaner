@@ -1,0 +1,348 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Deal-Hunter List Cleaner</title>
+<style>
+  :root { --bg:#f6f7f9; --card:#fff; --ink:#1a202c; --sub:#5a6472; --line:#e2e8f0;
+          --accent:#2563eb; --ok:#16a34a; --warn:#d97706; --bad:#dc2626; }
+  @media (prefers-color-scheme: dark) {
+    :root { --bg:#0f1420; --card:#1a2030; --ink:#e8ecf3; --sub:#93a0b4; --line:#2a3347;
+            --accent:#60a5fa; --ok:#4ade80; --warn:#fbbf24; --bad:#f87171; }
+  }
+  * { box-sizing:border-box; margin:0; }
+  body { font:15px/1.5 -apple-system,'Segoe UI',Roboto,sans-serif; background:var(--bg); color:var(--ink); padding:24px; }
+  .wrap { max-width:1100px; margin:0 auto; }
+  h1 { font-size:22px; margin-bottom:4px; }
+  .sub { color:var(--sub); margin-bottom:20px; }
+  .privacy { background:var(--card); border:1px solid var(--ok); border-radius:10px; padding:10px 14px; margin-bottom:20px; font-size:14px; }
+  .card { background:var(--card); border:1px solid var(--line); border-radius:12px; padding:20px; margin-bottom:20px; }
+  .card h2 { font-size:17px; margin-bottom:10px; }
+  .step { color:var(--accent); font-weight:700; font-size:13px; text-transform:uppercase; letter-spacing:.05em; }
+  label.file { display:inline-block; background:var(--accent); color:#fff; border-radius:8px; padding:9px 16px; cursor:pointer; font-weight:600; margin:6px 0; }
+  input[type=file] { display:none; }
+  .opt { margin:10px 0; color:var(--sub); }
+  .opt input[type=number] { width:70px; padding:4px 6px; border:1px solid var(--line); border-radius:6px; background:var(--bg); color:var(--ink); }
+  button.run { background:var(--ok); color:#fff; border:0; border-radius:8px; padding:10px 20px; font-size:15px; font-weight:700; cursor:pointer; margin-top:8px; }
+  button.run:disabled { opacity:.4; cursor:not-allowed; }
+  button.dl { background:var(--accent); color:#fff; border:0; border-radius:8px; padding:10px 20px; font-weight:700; cursor:pointer; margin-top:10px; }
+  .stats { display:flex; flex-wrap:wrap; gap:10px; margin:14px 0; }
+  .stat { background:var(--bg); border:1px solid var(--line); border-radius:10px; padding:8px 14px; text-align:center; min-width:96px; }
+  .stat b { display:block; font-size:20px; }
+  .stat.drop b { color:var(--bad); } .stat.keep b { color:var(--ok); }
+  .stat span { font-size:12px; color:var(--sub); }
+  .tblwrap { overflow-x:auto; border:1px solid var(--line); border-radius:10px; margin-top:10px; }
+  table { border-collapse:collapse; font-size:12.5px; white-space:nowrap; width:100%; }
+  th, td { padding:5px 9px; border-bottom:1px solid var(--line); text-align:left; max-width:220px; overflow:hidden; text-overflow:ellipsis; }
+  th { background:var(--bg); position:sticky; top:0; font-weight:700; }
+  .cap { color:var(--sub); font-size:13px; margin-top:8px; }
+  .filemeta { color:var(--sub); font-size:13.5px; margin-left:10px; }
+  .fmt { margin:8px 0; font-size:13.5px; color:var(--sub); }
+  .hidden { display:none; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>🏠 Deal-Hunter List Cleaner</h1>
+  <div class="sub">DealMachine export → cleaned &amp; verified → Instantly-ready. Mirrors <code>clean_list.py</code>.</div>
+  <div class="privacy">🔒 <b>All processing happens in your browser.</b> No file is uploaded anywhere — lead data never leaves this computer.</div>
+
+  <div class="card">
+    <span class="step">Stage A</span>
+    <h2>Clean the DealMachine export</h2>
+    <label class="file">Choose export CSV<input type="file" id="fileA" accept=".csv"></label>
+    <span class="filemeta" id="metaA"></span>
+    <div class="fmt" id="fmtA"></div>
+    <div class="opt"><label><input type="checkbox" id="lotGate" checked> Lot size gate ≥ <input type="number" id="lotMin" value="0.25" step="0.05" min="0"> acres (the server-side filter is broken — this is where it really happens)</label></div>
+    <div id="beforeA" class="hidden"><div class="cap">BEFORE — first rows of your export:</div><div class="tblwrap" id="tblBeforeA"></div></div>
+    <button class="run" id="runA" disabled>Run Stage A</button>
+    <div id="outA" class="hidden">
+      <div class="stats" id="statsA"></div>
+      <div class="cap">AFTER — one row per email, each with its own contact's name (first rows):</div>
+      <div class="tblwrap" id="tblAfterA"></div>
+      <button class="dl" id="dlA">⬇ Download _toverify.csv → upload to MillionVerifier</button>
+    </div>
+  </div>
+
+  <div class="card">
+    <span class="step">Stage B</span>
+    <h2>Merge MillionVerifier results → final Instantly list</h2>
+    <label class="file">Choose _toverify.csv<input type="file" id="fileB1" accept=".csv"></label>
+    <span class="filemeta" id="metaB1"></span><br>
+    <label class="file">Choose MillionVerifier results CSV<input type="file" id="fileB2" accept=".csv"></label>
+    <span class="filemeta" id="metaB2"></span>
+    <div id="beforeB" class="hidden"><div class="cap">BEFORE — rows going into verification merge:</div><div class="tblwrap" id="tblBeforeB"></div></div>
+    <button class="run" id="runB" disabled>Run Stage B</button>
+    <div id="outB" class="hidden">
+      <div class="stats" id="statsB"></div>
+      <div class="cap">AFTER — ONE row per PERSON, best verified email each. A property with two reachable contacts = two rows:</div>
+      <div class="tblwrap" id="tblAfterB"></div>
+      <button class="dl" id="dlB">⬇ Download _instantly.csv → upload to Instantly (one campaign per lane)</button>
+    </div>
+  </div>
+</div>
+
+<script>
+"use strict";
+/* ===== CSV parse/serialize (RFC 4180: quotes, escaped quotes, newlines in fields) ===== */
+function parseCSV(text) {
+  const rows = []; let row = [], cur = "", inQ = false;
+  if (text.charCodeAt(0) === 0xFEFF) text = text.slice(1);
+  for (let i = 0; i < text.length; i++) {
+    const c = text[i];
+    if (inQ) {
+      if (c === '"') { if (text[i+1] === '"') { cur += '"'; i++; } else inQ = false; }
+      else cur += c;
+    } else if (c === '"') inQ = true;
+    else if (c === ',') { row.push(cur); cur = ""; }
+    else if (c === '\n' || c === '\r') {
+      if (c === '\r' && text[i+1] === '\n') i++;
+      row.push(cur); cur = "";
+      if (row.length > 1 || row[0] !== "") rows.push(row);
+      row = [];
+    } else cur += c;
+  }
+  if (cur !== "" || row.length) { row.push(cur); rows.push(row); }
+  if (!rows.length) return { headers: [], rows: [] };
+  const headers = rows[0];
+  return { headers, rows: rows.slice(1).map(r => {
+    const o = {}; headers.forEach((h, j) => o[h] = r[j] ?? ""); return o; }) };
+}
+function toCSV(headers, rows) {
+  const esc = v => { v = String(v ?? ""); return /[",\n\r]/.test(v) ? '"' + v.replace(/"/g, '""') + '"' : v; };
+  return [headers.map(esc).join(",")].concat(rows.map(r => headers.map(h => esc(r[h])).join(","))).join("\r\n");
+}
+
+/* ===== ported clean_list.py logic ===== */
+const ROLE_PREFIXES = ["info@","admin@","office@","sales@","contact@","noreply@","no-reply@","support@","hello@","billing@"];
+const TRUTHY = ["y","yes","true","1","vacant"];
+const norm = h => (h || "").trim().toLowerCase().replace(/[^a-z0-9]/g, "_");
+function findCol(headers, ...pats) {
+  for (const p of pats) { const re = new RegExp(p);
+    for (const h of headers) if (re.test(norm(h))) return h; }
+  return null;
+}
+function lotSf(val, colname) {
+  const s = String(val ?? "").replace(/,/g, "").trim(); const f = parseFloat(s);
+  if (isNaN(f)) return s;
+  if ((colname || "").toLowerCase().includes("acre") || f < 20) return String(Math.round(f * 4356) * 10);
+  return String(Math.round(f));
+}
+function lotAcres(val, colname) {
+  const s = String(val ?? "").replace(/,/g, "").trim(); const f = parseFloat(s);
+  if (isNaN(f)) return null;
+  if ((colname || "").toLowerCase().includes("acre") || f < 20) return f;
+  return f / 43560;
+}
+const titleCase = s => s.replace(/\S+/g, w => w[0].toUpperCase() + w.slice(1).toLowerCase());
+function streetName(addr) {
+  let street = String(addr || "").split(",")[0];
+  const m = street.match(/^\s*\d+\s+(.*)/);
+  return titleCase((m ? m[1] : street).trim());
+}
+const isTrustlike = n => /\btrust\b|\bllc\b|\btr$|\bestate\b|\binc\b/.test((n || "").toLowerCase());
+
+function stageA(headers, rows, lotMin) {
+  const hmap = {
+    first: findCol(headers, "^first_name$", "owner.*first"),
+    last: findCol(headers, "^last_name$", "owner.*last"),
+    owner1: findCol(headers, "^owner_1_full_name$"),
+    prop: findCol(headers, "property_address_line_1", "property_address_full", "^property_address$", "^full_address$", "^address$"),
+    mail: findCol(headers, "mailing_address_line_1", "owner.*mailing", "^mailing_address$"),
+    occflag: findCol(headers, "^is_owner_occupied$"),
+    lot: findCol(headers, "lot_size", "lot_sf", "lot_square"),
+    yb: findCol(headers, "^year_built$"),
+    owned: findCol(headers, "years_owned", "ownership_length", "^last_sale_date$"),
+    vacant: findCol(headers, "^is_vacant_home$", "vacan"),
+    fc: findCol(headers, "^is_preforeclosure$", "^foreclosure_status$", "foreclos", "^nod", "auction"),
+    mkt: findCol(headers, "^market_status$"),
+    lanes: findCol(headers, "^lanes$"),
+  };
+  const uiEmailCols = headers.filter(h => /^email(_address)?(_?\d)?$/.test(norm(h))).sort((a,b)=>norm(a)<norm(b)?-1:1);
+  const apiContacts = {};
+  for (const h of headers) {
+    let m = norm(h).match(/^likely_owner_contact_(\d+)_email_address_(\d+)$/);
+    if (m) { (apiContacts[m[1]] ??= { name: null, emails: [] }).emails.push(h); continue; }
+    m = norm(h).match(/^likely_owner_contact_(\d+)_full_name$/);
+    if (m) (apiContacts[m[1]] ??= { name: null, emails: [] }).name = h;
+  }
+  Object.values(apiContacts).forEach(c => c.emails.sort((a,b)=>norm(a)<norm(b)?-1:1));
+  const isAPI = Object.keys(apiContacts).length > 0;
+  if (!isAPI && !uiEmailCols.length) throw new Error("No email columns recognized in this file.");
+
+  const stats = { input_rows:0, civ1695_dropped:0, mls_active_dropped:0, lot_below_min:0,
+                  no_email:0, role_email:0, dupe_email:0, output_rows:0 };
+  const seen = new Set(), out = [];
+  rows.forEach((row, i) => {
+    stats.input_rows++;
+    const prop = (row[hmap.prop] || "").trim();
+    let ownerOcc;
+    if (hmap.occflag && (row[hmap.occflag] || "").trim() !== "")
+      ownerOcc = TRUTHY.includes((row[hmap.occflag] || "").trim().toLowerCase());
+    else {
+      const mail = hmap.mail ? (row[hmap.mail] || "").trim() : "";
+      ownerOcc = !!prop && (norm(prop) === norm(mail) || !mail);
+    }
+    const fcv = hmap.fc ? String(row[hmap.fc] || "").trim().toLowerCase() : "";
+    if (fcv && !["0","n","no","false","none","off market"].includes(fcv) && ownerOcc) { stats.civ1695_dropped++; return; }
+    if (hmap.mkt && ["active","pending","contingent"].includes((row[hmap.mkt] || "").trim().toLowerCase())) { stats.mls_active_dropped++; return; }
+    if (lotMin != null && hmap.lot) {
+      const ac = lotAcres(row[hmap.lot], hmap.lot);
+      if (ac != null && ac < lotMin) { stats.lot_below_min++; return; }
+    }
+    const vac = hmap.vacant ? TRUTHY.includes(String(row[hmap.vacant] || "").trim().toLowerCase()) : false;
+    const seg = vac ? "vacant" : (ownerOcc ? "owner_occupant" : "absentee");
+    const entries = [];
+    if (isAPI) {
+      for (const n of Object.keys(apiContacts).sort((a,b)=>a-b)) {
+        const c = apiContacts[n];
+        const full = c.name ? (row[c.name] || "").trim() : "";
+        let cf = "", cl = "";
+        if (full && !isTrustlike(full)) {
+          const parts = full.split(/\s+/);
+          cf = titleCase(parts[0]); cl = parts.length > 1 ? titleCase(parts[parts.length-1]) : "";
+        }
+        c.emails.forEach((col, si) => {
+          const e = (row[col] || "").trim().toLowerCase();
+          if (e && e.includes("@")) entries.push([(n-1)*3 + si + 1, e, cf, cl, String(n)]);
+        });
+      }
+    } else {
+      const cf = hmap.first ? titleCase((row[hmap.first] || "").trim()) : "";
+      const cl = hmap.last ? titleCase((row[hmap.last] || "").trim()) : "";
+      uiEmailCols.forEach((col, ri) => {
+        const e = (row[col] || "").trim().toLowerCase();
+        if (e && e.includes("@")) entries.push([ri + 1, e, cf, cl, "1"]);
+      });
+    }
+    if (!entries.length) { stats.no_email++; return; }
+    for (const [rank, e, cf, cl, slot] of entries) {
+      if (ROLE_PREFIXES.some(p => e.startsWith(p))) { stats.role_email++; continue; }
+      if (seen.has(e)) { stats.dupe_email++; continue; }
+      seen.add(e);
+      const fullname = (cf + " " + cl).trim() || (hmap.owner1 ? (row[hmap.owner1] || "").trim() : "");
+      const greet = (cf && !isTrustlike(fullname)) ? cf : streetName(prop);
+      out.push({ owner_key: "K" + String(i).padStart(5, "0"), email: e, email_rank: rank, contact_slot: slot,
+                 greeting_name: greet || "there", first_name: cf, last_name: cl,
+                 property_address: prop, street_name: streetName(prop), segment: seg,
+                 dnc_any: "N", lanes: hmap.lanes ? (row[hmap.lanes] || "").trim() : "",
+                 lot_sf: lotSf(hmap.lot ? row[hmap.lot] : "", hmap.lot || ""),
+                 year_built: hmap.yb ? (row[hmap.yb] || "").trim() : "",
+                 years_owned: hmap.owned ? (row[hmap.owned] || "").trim() : "" });
+      stats.output_rows++;
+    }
+  });
+  return { stats, out, format: isAPI ? `API export (${Object.keys(apiContacts).length} contacts/property, per-contact names)` : `UI export (${uiEmailCols.length} email columns)` };
+}
+
+function stageB(tvRows, mvHeaders, mvRows) {
+  const ecol = findCol(mvHeaders, "^email$", "email_address");
+  const rcol = findCol(mvHeaders, "^result$", "^status$", "quality");
+  if (!ecol || !rcol) throw new Error("Can't find email/result columns in the MillionVerifier file.");
+  const verdict = {};
+  mvRows.forEach(r => verdict[(r[ecol] || "").trim().toLowerCase()] = (r[rcol] || "").trim().toLowerCase());
+  const best = {};
+  const stats = { in: tvRows.length, valid:0, invalid_or_risky:0, persons:0, properties:0,
+                  multi_contact_properties:0, fell_back_rank2plus:0, won_by_contact2plus:0 };
+  for (const row of tvRows) {
+    const v = verdict[row.email] ?? "unknown";
+    if (!["good","ok","valid","deliverable"].includes(v)) { stats.invalid_or_risky++; continue; }
+    stats.valid++;
+    const k = row.owner_key + "|" + (row.contact_slot || "1");
+    if (!(k in best) || +row.email_rank < +best[k].email_rank) best[k] = row;
+  }
+  const props = {};
+  for (const r of Object.values(best)) {
+    if (+r.email_rank > 1) stats.fell_back_rank2plus++;
+    if ((r.contact_slot || "1") !== "1") stats.won_by_contact2plus++;
+    props[r.owner_key] = (props[r.owner_key] || 0) + 1;
+  }
+  stats.persons = Object.keys(best).length;
+  stats.properties = Object.keys(props).length;
+  stats.multi_contact_properties = Object.values(props).filter(n => n > 1).length;
+  const out = Object.values(best).sort((a,b) =>
+    (a.owner_key + a.contact_slot) < (b.owner_key + b.contact_slot) ? -1 : 1);
+  return { stats, out };
+}
+
+/* ===== UI wiring ===== */
+const $ = id => document.getElementById(id);
+const state = {};
+const DROPS = new Set(["civ1695_dropped","mls_active_dropped","lot_below_min","no_email","role_email","dupe_email","invalid_or_risky"]);
+function renderStats(el, stats) {
+  el.innerHTML = Object.entries(stats).map(([k, v]) =>
+    `<div class="stat ${DROPS.has(k) ? "drop" : "keep"}"><b>${v.toLocaleString()}</b><span>${k.replace(/_/g," ")}</span></div>`).join("");
+}
+function renderTable(el, headers, rows, n = 12) {
+  el.innerHTML = "<table><thead><tr>" + headers.map(h => `<th>${h}</th>`).join("") +
+    "</tr></thead><tbody>" + rows.slice(0, n).map(r =>
+    "<tr>" + headers.map(h => `<td>${String(r[h] ?? "")}</td>`).join("") + "</tr>").join("") +
+    "</tbody></table>";
+}
+function download(name, headers, rows) {
+  const blob = new Blob([toCSV(headers, rows)], { type: "text/csv" });
+  const a = document.createElement("a");
+  a.href = URL.createObjectURL(blob); a.download = name; a.click();
+  URL.revokeObjectURL(a.href);
+}
+function readFile(input, cb) {
+  const f = input.files[0]; if (!f) return;
+  const rd = new FileReader();
+  rd.onload = () => cb(f, parseCSV(rd.result));
+  rd.readAsText(f);
+}
+
+$("fileA").addEventListener("change", () => readFile($("fileA"), (f, parsed) => {
+  state.A = parsed; state.nameA = f.name;
+  $("metaA").textContent = `${f.name} — ${parsed.rows.length.toLocaleString()} rows, ${parsed.headers.length} columns`;
+  renderTable($("tblBeforeA"), parsed.headers.slice(0, 14), parsed.rows);
+  $("beforeA").classList.remove("hidden");
+  $("runA").disabled = false; $("outA").classList.add("hidden");
+}));
+$("runA").addEventListener("click", () => {
+  try {
+    const lotMin = $("lotGate").checked ? parseFloat($("lotMin").value) : null;
+    const res = stageA(state.A.headers, state.A.rows, isNaN(lotMin) ? null : lotMin);
+    state.resA = res;
+    $("fmtA").textContent = "Detected format: " + res.format;
+    renderStats($("statsA"), res.stats);
+    const hdrs = res.out.length ? Object.keys(res.out[0]) : [];
+    renderTable($("tblAfterA"), hdrs, res.out);
+    $("outA").classList.remove("hidden");
+  } catch (e) { alert(e.message); }
+});
+$("dlA").addEventListener("click", () => {
+  const hdrs = Object.keys(state.resA.out[0] || { email: 1 });
+  download(state.nameA.replace(/\.csv$/i, "") + "_toverify.csv", hdrs, state.resA.out);
+});
+
+function checkB() { $("runB").disabled = !(state.B1 && state.B2); }
+$("fileB1").addEventListener("change", () => readFile($("fileB1"), (f, parsed) => {
+  state.B1 = parsed; state.nameB1 = f.name;
+  $("metaB1").textContent = `${f.name} — ${parsed.rows.length.toLocaleString()} rows`;
+  renderTable($("tblBeforeB"), parsed.headers, parsed.rows);
+  $("beforeB").classList.remove("hidden"); checkB();
+}));
+$("fileB2").addEventListener("change", () => readFile($("fileB2"), (f, parsed) => {
+  state.B2 = parsed;
+  $("metaB2").textContent = `${f.name} — ${parsed.rows.length.toLocaleString()} rows`;
+  checkB();
+}));
+$("runB").addEventListener("click", () => {
+  try {
+    const res = stageB(state.B1.rows, state.B2.headers, state.B2.rows);
+    state.resB = res;
+    renderStats($("statsB"), res.stats);
+    const hdrs = res.out.length ? Object.keys(res.out[0]) : [];
+    renderTable($("tblAfterB"), hdrs, res.out);
+    $("outB").classList.remove("hidden");
+  } catch (e) { alert(e.message); }
+});
+$("dlB").addEventListener("click", () => {
+  const hdrs = Object.keys(state.resB.out[0] || { email: 1 });
+  download(state.nameB1.replace(/_toverify\.csv$/i, "").replace(/\.csv$/i, "") + "_instantly.csv", hdrs, state.resB.out);
+});
+</script>
+</body>
+</html>
