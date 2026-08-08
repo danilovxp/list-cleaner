@@ -121,4 +121,13 @@ const HISTORY = [
     numbers: "0 credits spent (estimate_cost dry-runs). Proposed: Pull A (Roseville ~2,500 props ≈ 6,800 cr) + Pull B (base new signals ~1,900 ≈ 5,200 cr) — awaiting Vlad's approval; credits expire Aug 31",
     notes: "Separate signal searches merged into one list cost the same as OR (cycle dedupe) and keep lanes attribution. Playbook updated with Roseville recipes."
   },
+  {
+    date: "2026-08-07", type: "site",
+    title: "Filter Picker page — click-by-click DealMachine UI guide",
+    lists: "—",
+    filters: "one card per list: exact UI filter names + values + live counts (base & Roseville) + campaign routing · copy-paste zip strings · never-do card (lot filter, Roseville condition, dead filters) · naming convention = lanes tag",
+    results: "12 list cards (7 proven lanes + 5 new signals); building in the UI is free — credits only at export",
+    numbers: "—",
+    notes: "Sidebar: Monthly pipeline → 🎯 Filter Picker."
+  },
 ];
