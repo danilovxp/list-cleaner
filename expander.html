@@ -333,11 +333,12 @@ function renderStats(el, stats) {
   el.innerHTML = Object.entries(stats).map(([k, v]) =>
     `<div class="stat ${DROPS.has(k) ? "drop" : FLAGS.has(k) ? "flag" : "keep"}"><b>${v.toLocaleString()}</b><span>${k.replace(/_/g," ")}</span></div>`).join("");
 }
+const escHtml = s => String(s ?? "").replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;");
 function renderTable(el, headers, rows) {  // FULL list, scrollable, numbered rows
-  const parts = ['<table><thead><tr><th class="rownum">#</th>', ...headers.map(h => `<th>${h}</th>`), "</tr></thead><tbody>"];
+  const parts = ['<table><thead><tr><th class="rownum">#</th>', ...headers.map(h => `<th>${escHtml(h)}</th>`), "</tr></thead><tbody>"];
   rows.forEach((r, i) => {
     const cls = (r.do_not_email_1695 || "").toUpperCase() === "YES" ? ' class="flagged"' : "";
-    parts.push(`<tr${cls}><td class="rownum">${i + 1}</td>`, ...headers.map(h => `<td>${String(r[h] ?? "")}</td>`), "</tr>");
+    parts.push(`<tr${cls}><td class="rownum">${i + 1}</td>`, ...headers.map(h => `<td>${escHtml(r[h])}</td>`), "</tr>");
   });
   parts.push("</tbody></table>");
   el.innerHTML = parts.join("");

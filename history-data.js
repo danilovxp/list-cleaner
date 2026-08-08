@@ -1,6 +1,7 @@
 // Deal-hunter operations log — the "database" behind history.html.
 // Claude APPENDS an entry for every meaningful operation (pull, filter, verify, upload,
-// campaign change, infra, decision). NEVER put PII here (no addresses, no emails, no names) —
+// campaign change, infra, decision). NEVER put LEAD PII here (no owner names, lead emails,
+// or lead street addresses; Vlad's own public business contact info is fine) —
 // this file is public. Aggregates, filters, and numbers only. Newest entries LAST (page
 // renders newest-first). Git history of this file is the tamper-proof backup log.
 const HISTORY = [

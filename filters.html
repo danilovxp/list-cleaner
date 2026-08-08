@@ -24,7 +24,7 @@
   .zipchip .lbl { font-size:12px; color:var(--sub); font-weight:700; text-transform:uppercase; letter-spacing:.5px; }
   .zipchip code { font-size:14.5px; font-weight:700; }
   .zipchip button { margin-left:10px; border:0; border-radius:7px; padding:5px 12px; font-weight:700; cursor:pointer; background:var(--accent); color:#fff; }
-  .grid { display:grid; grid-template-columns:repeat(auto-fill, minmax(330px, 1fr)); gap:12px; }
+  .grid { display:grid; grid-template-columns:repeat(auto-fill, minmax(min(330px, 100%), 1fr)); gap:12px; }
   .fcard { background:var(--card); border:1px solid var(--line); border-radius:12px; padding:14px 16px; }
   .fcard .name { font-weight:800; font-size:15.5px; display:flex; justify-content:space-between; align-items:baseline; gap:8px; }
   .fcard .cnt { color:var(--accent); font-weight:800; font-size:13px; white-space:nowrap; }
@@ -142,10 +142,23 @@
 <script>
 "use strict";
 document.querySelectorAll(".zipchip button").forEach(b => b.addEventListener("click", () => {
-  navigator.clipboard.writeText(document.getElementById(b.dataset.c).textContent).then(() => {
-    const t = b.textContent; b.textContent = "Copied ✓";
-    setTimeout(() => b.textContent = t, 1400);
-  });
+  const text = document.getElementById(b.dataset.c).textContent;
+  const done = ok => { b.textContent = ok ? "Copied ✓" : "Copy failed — select manually"; setTimeout(() => b.textContent = "Copy", 1600); };
+  const fallback = () => {
+    const ta = document.createElement("textarea");
+    ta.value = text; ta.style.cssText = "position:fixed;opacity:0";
+    document.body.appendChild(ta); ta.select();
+    let ok = false;
+    try { ok = document.execCommand("copy"); } catch (e) { /* stay false */ }
+    ta.remove(); done(ok);
+  };
+  if (navigator.clipboard && navigator.clipboard.writeText) {
+    let settled = false;
+    const guard = setTimeout(() => { if (!settled) { settled = true; fallback(); } }, 800);
+    navigator.clipboard.writeText(text).then(
+      () => { if (!settled) { settled = true; clearTimeout(guard); done(true); } },
+      () => { if (!settled) { settled = true; clearTimeout(guard); fallback(); } });
+  } else fallback();
 }));
 </script>
 </div><!--hq-content--></body>

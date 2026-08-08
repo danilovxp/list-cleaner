@@ -88,7 +88,7 @@
 <script>
 "use strict";
 let typeFilter = "";
-const esc = s => String(s ?? "").replace(/&/g, "&amp;").replace(/</g, "&lt;");
+const esc = s => String(s ?? "").replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;");
 
 function render() {
   const needle = document.getElementById("search").value.toLowerCase();

@@ -14,8 +14,6 @@
   * { box-sizing:border-box; margin:0; }
   body { font:15px/1.5 -apple-system,'Segoe UI',Roboto,sans-serif; background:var(--bg); color:var(--ink); padding:24px; }
   .wrap { max-width:1280px; margin:0 auto; }
-  nav { margin-bottom:16px; }
-  nav a { color:var(--accent); font-weight:700; text-decoration:none; margin-right:16px; }
   h1 { font-size:22px; margin-bottom:4px; }
   h2 { font-size:16px; margin-bottom:8px; }
   .sub { color:var(--sub); margin-bottom:14px; }
@@ -149,8 +147,8 @@ window.loadCsvText = loadCsvText;
 function outcomeClass(v) {
   if (!v) return "";
   if (/^(kept|in_final_list|ok|good)$/.test(v)) return "good";
-  if (/lost_to_winner|catch_all|unknown$/.test(v)) return "warn";
-  if (/^dropped|invalid|disposable/.test(v)) return "bad";
+  if (/^(valid_but_lost_to_winner|catch_all|unknown)$/.test(v) || /lost_to_winner/.test(v)) return "warn";
+  if (/^(dropped.*|invalid|disposable)$/.test(v)) return "bad";
   return "";
 }
 
@@ -165,11 +163,12 @@ function render() {
   files.forEach((f, i) => {
     const t = document.createElement("div");
     t.className = "tab" + (i === active ? " active" : "");
-    t.innerHTML = `${f.name} <span style="opacity:.75;font-weight:400">(${f.rows.length.toLocaleString()})</span><span class="x" data-x="${i}">✕</span>`;
+    t.innerHTML = `${String(f.name).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/\"/g, "&quot;")} <span style="opacity:.75;font-weight:400">(${f.rows.length.toLocaleString()})</span><span class="x" data-x="${i}">✕</span>`;
     t.addEventListener("click", e => {
       if (e.target.dataset.x !== undefined) {
         files.splice(+e.target.dataset.x, 1);
         active = Math.min(active, files.length - 1);
+        outcomeFilter = null;
       } else { active = i; outcomeFilter = null; document.getElementById("search").value = ""; }
       render();
     });
