@@ -103,4 +103,13 @@ const HISTORY = [
     numbers: "0 credits · campaigns still draft",
     notes: "Operative library: skill references/email-sequences-v5.md · edit + redeploy via scripts/deploy_sequences_v5.py."
   },
+  {
+    date: "2026-08-07", type: "campaign",
+    title: "Copy v6 — sentence-level spintax (super-unique emails) + minimal signature",
+    lists: "all 4 campaigns (16 email variants)",
+    filters: "every sentence = spin among 3–4 complete alternatives, word spins kept inside · merge tokens never inside spin blocks · signature cut to '— Vlad / Prime Home Strategies · (916) 999-9947' (postal address dropped by Vlad's decision, CAN-SPAM tradeoff logged)",
+    results: "verified stored: per-email template combinations 243–26,244 (campaign sizes 7–507 → byte-identical emails effectively impossible, merge fields differ on top)",
+    numbers: "0 credits · campaigns still draft",
+    notes: "Edit + redeploy: skill scripts/deploy_sequences_v6.py (prints uniqueness math on every run)."
+  },
 ];
