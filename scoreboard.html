@@ -37,15 +37,37 @@
   .verdict-scale { color:var(--ok); font-weight:700; }
   .verdict-retire { color:var(--bad); font-weight:700; }
 </style>
-<style>
-  nav.topnav { margin-bottom:16px; display:flex; flex-wrap:wrap; gap:4px 16px; }
-  nav.topnav a { color:var(--accent); font-weight:700; text-decoration:none; }
-  nav.topnav a.here { color:var(--ink); border-bottom:2px solid var(--accent); pointer-events:none; }
+<style data-hq-shell>
+  body.hq { display:grid; grid-template-columns:236px minmax(0,1fr); min-height:100vh; padding:0 !important; }
+  .hq-side { position:sticky; top:0; height:100vh; overflow-y:auto; background:var(--card);
+             border-right:1px solid var(--line); padding:16px 12px; display:flex; flex-direction:column; }
+  .hq-brand { font-weight:800; font-size:16.5px; padding:4px 10px 0; }
+  .hq-brand span { color:var(--accent); }
+  .hq-tag { color:var(--sub); font-size:11.5px; padding:0 10px 10px; }
+  .hq-group { color:var(--sub); font-size:10.5px; font-weight:800; text-transform:uppercase;
+              letter-spacing:.8px; padding:16px 10px 5px; }
+  .hq-side a.hq-item { display:flex; align-items:center; gap:10px; padding:8px 10px; margin:1px 0;
+             border-radius:8px; color:var(--ink); text-decoration:none; font-weight:600; font-size:14px; }
+  .hq-side a.hq-item:hover { background:var(--bg); }
+  .hq-side a.hq-item.here { background:color-mix(in srgb, var(--accent) 13%, transparent);
+                            color:var(--accent); font-weight:800; }
+  .hq-foot { margin-top:auto; padding:12px 10px 4px; border-top:1px solid var(--line);
+             font-size:12px; color:var(--sub); line-height:1.6; }
+  .hq-foot b { color:var(--ink); }
+  .hq-content { padding:24px; min-width:0; }
+  @media (max-width: 900px) {
+    body.hq { grid-template-columns:1fr; }
+    .hq-side { position:static; height:auto; flex-direction:row; flex-wrap:wrap; gap:2px;
+               align-items:center; border-right:0; border-bottom:1px solid var(--line); padding:10px 12px; }
+    .hq-brand { width:100%; padding:0 6px 6px; }
+    .hq-tag, .hq-group, .hq-foot { display:none; }
+    .hq-side a.hq-item { padding:6px 10px; font-size:13.5px; }
+    .hq-content { padding:16px; }
+  }
 </style>
 </head>
-<body>
+<body class="hq"><aside class="hq-side"><div class="hq-brand">🏠 Deal-Hunter <span>HQ</span></div><div class="hq-tag">internal ops console</div><div class="hq-group">Overview</div><a class="hq-item" href="index.html"><span>🏡</span>Dashboard</a><a class="hq-item" href="history.html"><span>📜</span>History</a><div class="hq-group">Monthly pipeline</div><a class="hq-item" href="playbook.html"><span>📋</span>Playbook</a><a class="hq-item" href="expander.html"><span>🧩</span>Expander</a><a class="hq-item" href="inspector.html"><span>🔍</span>Inspector</a><a class="hq-item" href="funnel.html"><span>📈</span>Funnel</a><div class="hq-group">Results</div><a class="hq-item here" href="scoreboard.html"><span>📊</span>Scoreboard</a><div class="hq-foot">🚀 <b>Launch Aug 18</b> · 746 leads staged<br><a href="https://www.primehomestrategies.com" style="color:var(--accent);text-decoration:none">primehomestrategies.com ↗</a></div></aside><div class="hq-content">
 <div class="wrap">
-  <nav class="topnav"><a href="index.html">🏠 Expander</a><a href="playbook.html">📋 Playbook</a><a href="scoreboard.html" class="here">📊 Scoreboard</a><a href="funnel.html">📈 Funnel</a><a href="inspector.html">🔍 Inspector</a><a href="history.html">📜 History</a></nav>
   <h1>📊 Scoreboard — which motivation signal makes money?</h1>
   <div class="sub">One row per list. Lists share campaigns by copy type (4 campaigns); per-list numbers come from Claude's monthly pull of replied leads grouped by the lanes tag. Verdict unlocks at 100 sends.</div>
   <div class="privacy">🔒 <b>Your numbers live only in this browser</b> (localStorage) — the public page contains no data. Use Export for a backup you can re-Import on another machine.</div>
@@ -165,5 +187,5 @@ document.getElementById("resetBtn").addEventListener("click", () => {
 });
 render();
 </script>
-</body>
+</div><!--hq-content--></body>
 </html>

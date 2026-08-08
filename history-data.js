@@ -85,4 +85,13 @@ const HISTORY = [
     numbers: "—",
     notes: "Convention: every future operation appends an entry to history-data.js (both repo copies)."
   },
+  {
+    date: "2026-08-07", type: "site",
+    title: "HQ v2 — real app shell (Vlad: 'the navigation is terrible')",
+    lists: "—",
+    filters: "persistent left sidebar on every page, grouped Overview / Monthly pipeline / Results, active page highlighted, mobile collapse · new Dashboard home (launch countdown, staged leads, ramp, credits, weekly checklist, automation calendar) · Expander moved to expander.html",
+    results: "7 pages, one shell: Dashboard · History · Playbook · Expander · Inspector · Funnel · Scoreboard",
+    numbers: "—",
+    notes: "Shell maintained by tools/list-cleaner/build_shell.py — add a page to PAGES and run it; it re-shells everything and mirrors to the deploy repo."
+  },
 ];

@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Deal-Hunter List Expander</title>
+<title>Dashboard — Deal-Hunter HQ</title>
 <style>
   :root { --bg:#f6f7f9; --card:#fff; --ink:#1a202c; --sub:#5a6472; --line:#e2e8f0;
           --accent:#2563eb; --ok:#16a34a; --warn:#d97706; --bad:#dc2626; }
@@ -13,383 +13,142 @@
   }
   * { box-sizing:border-box; margin:0; }
   body { font:15px/1.5 -apple-system,'Segoe UI',Roboto,sans-serif; background:var(--bg); color:var(--ink); padding:24px; }
-  .wrap { max-width:1200px; margin:0 auto; }
+  .wrap { max-width:1100px; margin:0 auto; }
   h1 { font-size:22px; margin-bottom:4px; }
-  .sub { color:var(--sub); margin-bottom:20px; }
-  .privacy { background:var(--card); border:1px solid var(--ok); border-radius:10px; padding:10px 14px; margin-bottom:20px; font-size:14px; }
-  .warn1695 { background:var(--card); border:1px solid var(--warn); border-radius:10px; padding:10px 14px; margin:12px 0; font-size:14px; }
-  .card { background:var(--card); border:1px solid var(--line); border-radius:12px; padding:20px; margin-bottom:20px; }
-  .card h2 { font-size:17px; margin-bottom:10px; }
-  .step { color:var(--accent); font-weight:700; font-size:13px; text-transform:uppercase; letter-spacing:.05em; }
-  label.file { display:inline-block; background:var(--accent); color:#fff; border-radius:8px; padding:9px 16px; cursor:pointer; font-weight:600; margin:6px 0; }
-  input[type=file] { display:none; }
-  button.run { background:var(--ok); color:#fff; border:0; border-radius:8px; padding:10px 20px; font-size:15px; font-weight:700; cursor:pointer; margin-top:8px; }
-  button.run:disabled { opacity:.4; cursor:not-allowed; }
-  button.dl { background:var(--accent); color:#fff; border:0; border-radius:8px; padding:10px 20px; font-weight:700; cursor:pointer; margin-top:10px; }
-  .stats { display:flex; flex-wrap:wrap; gap:10px; margin:14px 0; }
-  .stat { background:var(--bg); border:1px solid var(--line); border-radius:10px; padding:8px 14px; text-align:center; min-width:96px; }
-  .stat b { display:block; font-size:20px; }
-  .stat.drop b { color:var(--bad); } .stat.keep b { color:var(--ok); } .stat.flag b { color:var(--warn); }
-  .stat span { font-size:12px; color:var(--sub); }
-  .tblwrap { overflow:auto; max-height:440px; border:1px solid var(--line); border-radius:10px; margin-top:10px; }
-  table { border-collapse:collapse; font-size:12.5px; white-space:nowrap; }
-  th, td { padding:4px 9px; border-bottom:1px solid var(--line); text-align:left; max-width:230px; overflow:hidden; text-overflow:ellipsis; }
-  th { background:var(--bg); position:sticky; top:0; font-weight:700; z-index:1; }
-  .rownum { position:sticky; left:0; background:var(--bg); color:var(--sub); font-weight:600;
-            text-align:right; min-width:44px; z-index:1; }
-  th.rownum { z-index:2; }
-  tr.flagged td { color:var(--warn); }
-  .cap { color:var(--sub); font-size:13px; margin-top:10px; }
-  .filemeta { color:var(--sub); font-size:13.5px; margin-left:10px; }
-  .fmt { margin:8px 0; font-size:13.5px; color:var(--sub); }
-  .hidden { display:none; }
+  h2 { font-size:16px; margin-bottom:10px; }
+  .sub { color:var(--sub); margin-bottom:18px; }
+  .sub a { color:var(--accent); }
+  .hero { background:linear-gradient(135deg, var(--accent), #7c3aed); color:#fff; border-radius:14px;
+          padding:22px 24px; margin-bottom:18px; display:flex; flex-wrap:wrap; gap:8px 28px; align-items:baseline; }
+  .hero .big { font-size:30px; font-weight:800; }
+  .hero .d { opacity:.92; font-size:14px; }
+  .grid { display:grid; grid-template-columns:repeat(auto-fit, minmax(240px, 1fr)); gap:14px; margin-bottom:18px; }
+  .card { background:var(--card); border:1px solid var(--line); border-radius:12px; padding:16px 18px; }
+  .stat { font-size:28px; font-weight:800; color:var(--accent); line-height:1.1; }
+  .lbl { font-weight:700; margin-top:2px; }
+  .det { color:var(--sub); font-size:13px; margin-top:6px; line-height:1.55; }
+  .det b { color:var(--ink); }
+  a.more { color:var(--accent); font-weight:700; text-decoration:none; font-size:13px; }
+  ul.check { list-style:none; }
+  ul.check li { padding:7px 0; border-bottom:1px solid var(--line); font-size:14px; }
+  ul.check li:last-child { border-bottom:0; }
+  ul.check .when { color:var(--sub); font-size:12.5px; display:block; }
+  .cal td, .cal th { padding:6px 10px; border-bottom:1px solid var(--line); text-align:left; font-size:13.5px; }
+  .cal th { color:var(--sub); font-weight:700; white-space:nowrap; }
+  .cal { border-collapse:collapse; width:100%; }
+  .muted { color:var(--sub); font-size:13px; margin-top:14px; }
 </style>
-<style>
-  nav.topnav { margin-bottom:16px; display:flex; flex-wrap:wrap; gap:4px 16px; }
-  nav.topnav a { color:var(--accent); font-weight:700; text-decoration:none; }
-  nav.topnav a.here { color:var(--ink); border-bottom:2px solid var(--accent); pointer-events:none; }
+<style data-hq-shell>
+  body.hq { display:grid; grid-template-columns:236px minmax(0,1fr); min-height:100vh; padding:0 !important; }
+  .hq-side { position:sticky; top:0; height:100vh; overflow-y:auto; background:var(--card);
+             border-right:1px solid var(--line); padding:16px 12px; display:flex; flex-direction:column; }
+  .hq-brand { font-weight:800; font-size:16.5px; padding:4px 10px 0; }
+  .hq-brand span { color:var(--accent); }
+  .hq-tag { color:var(--sub); font-size:11.5px; padding:0 10px 10px; }
+  .hq-group { color:var(--sub); font-size:10.5px; font-weight:800; text-transform:uppercase;
+              letter-spacing:.8px; padding:16px 10px 5px; }
+  .hq-side a.hq-item { display:flex; align-items:center; gap:10px; padding:8px 10px; margin:1px 0;
+             border-radius:8px; color:var(--ink); text-decoration:none; font-weight:600; font-size:14px; }
+  .hq-side a.hq-item:hover { background:var(--bg); }
+  .hq-side a.hq-item.here { background:color-mix(in srgb, var(--accent) 13%, transparent);
+                            color:var(--accent); font-weight:800; }
+  .hq-foot { margin-top:auto; padding:12px 10px 4px; border-top:1px solid var(--line);
+             font-size:12px; color:var(--sub); line-height:1.6; }
+  .hq-foot b { color:var(--ink); }
+  .hq-content { padding:24px; min-width:0; }
+  @media (max-width: 900px) {
+    body.hq { grid-template-columns:1fr; }
+    .hq-side { position:static; height:auto; flex-direction:row; flex-wrap:wrap; gap:2px;
+               align-items:center; border-right:0; border-bottom:1px solid var(--line); padding:10px 12px; }
+    .hq-brand { width:100%; padding:0 6px 6px; }
+    .hq-tag, .hq-group, .hq-foot { display:none; }
+    .hq-side a.hq-item { padding:6px 10px; font-size:13.5px; }
+    .hq-content { padding:16px; }
+  }
 </style>
 </head>
-<body>
+<body class="hq"><aside class="hq-side"><div class="hq-brand">🏠 Deal-Hunter <span>HQ</span></div><div class="hq-tag">internal ops console</div><div class="hq-group">Overview</div><a class="hq-item here" href="index.html"><span>🏡</span>Dashboard</a><a class="hq-item" href="history.html"><span>📜</span>History</a><div class="hq-group">Monthly pipeline</div><a class="hq-item" href="playbook.html"><span>📋</span>Playbook</a><a class="hq-item" href="expander.html"><span>🧩</span>Expander</a><a class="hq-item" href="inspector.html"><span>🔍</span>Inspector</a><a class="hq-item" href="funnel.html"><span>📈</span>Funnel</a><div class="hq-group">Results</div><a class="hq-item" href="scoreboard.html"><span>📊</span>Scoreboard</a><div class="hq-foot">🚀 <b>Launch Aug 18</b> · 746 leads staged<br><a href="https://www.primehomestrategies.com" style="color:var(--accent);text-decoration:none">primehomestrategies.com ↗</a></div></aside><div class="hq-content">
 <div class="wrap">
-  <nav class="topnav"><a href="index.html" class="here">🏠 Expander</a><a href="playbook.html">📋 Playbook</a><a href="scoreboard.html">📊 Scoreboard</a><a href="funnel.html">📈 Funnel</a><a href="inspector.html">🔍 Inspector</a><a href="history.html">📜 History</a></nav>
-  <h1>🏠 Deal-Hunter List Expander</h1>
-  <div class="sub">DealMachine export → one row per owner/contact → MillionVerifier → Instantly-ready. <b>No filters — nothing is dropped except exact duplicate emails</b> (same email listed twice keeps only its first row; the removed count is shown). The full list goes in; the same list comes out, expanded with an extra row for each additional owner a property has. (Lot-size and campaign filters live in the Claude pipeline, not here.)</div>
-  <a href="playbook.html" style="display:inline-block;background:var(--accent);color:#fff;border-radius:8px;padding:8px 16px;font-weight:700;text-decoration:none;margin-bottom:18px;">📋 Forgot a step? Open the Playbook — filters, exports, all 6 steps →</a>
-  <div class="privacy">🔒 <b>All processing happens in your browser.</b> No file is uploaded anywhere — lead data never leaves this computer.</div>
+  <h1>Deal-Hunter HQ</h1>
+  <div class="sub">Off-market acquisition machine — internal dashboard. Numbers here are updated by Claude after each operation; the <a href="history.html">History log</a> is the record behind them.</div>
 
-  <div class="card">
-    <span class="step">Stage A — Expand</span>
-    <h2>Split each property into one row per owner &amp; email</h2>
-    <label class="file">Choose export CSV<input type="file" id="fileA" accept=".csv"></label>
-    <span class="filemeta" id="metaA"></span>
-    <div class="fmt" id="fmtA"></div>
-    <div id="beforeA" class="hidden"><div class="cap" id="capBeforeA"></div><div class="tblwrap" id="tblBeforeA"></div></div>
-    <button class="run" id="runA" disabled>Expand</button>
-    <div id="outA" class="hidden">
-      <div class="stats" id="statsA"></div>
-      <div id="warnA" class="warn1695 hidden"></div>
-      <div class="cap" id="capAfterA"></div>
-      <div class="tblwrap" id="tblAfterA"></div>
-      <button class="dl" id="dlA">⬇ Download _toverify.csv → upload to MillionVerifier</button>
+  <div class="hero">
+    <span class="big" id="countdown">🚀 Launch: Aug 18, 2026</span>
+    <span class="d">Gate: placement test ≥ 90% inbox (Aug 16) · Vlad presses Start · warmup stays ON</span>
+  </div>
+
+  <div class="grid">
+    <div class="card">
+      <div class="stat">746</div>
+      <div class="lbl">Leads staged in Instantly</div>
+      <div class="det">Big Lot <b>507</b> · Tax Delinquent <b>208</b> · Vacant <b>24</b> · Pre-Probate <b>7</b><br>
+      All draft — nothing sends until Start. <a class="more" href="funnel.html">Funnel →</a></div>
+    </div>
+    <div class="card">
+      <div class="stat">1,620 → 746</div>
+      <div class="lbl">Batch #1 conversion</div>
+      <div class="det">properties pulled → verified people (lot gate −1,027 · MillionVerifier 67% ok)<br>
+      <a class="more" href="funnel.html">Every drop itemized →</a></div>
+    </div>
+    <div class="card">
+      <div class="stat">7 / day</div>
+      <div class="lbl">Week-1 send ramp</div>
+      <div class="det">1 per mailbox · week 2: <b>15</b> · week 3: <b>28</b> — bumps auto-apply only if bounce &lt; 3%</div>
+    </div>
+    <div class="card">
+      <div class="stat">6 × 99%+</div>
+      <div class="lbl">Mailbox health</div>
+      <div class="det">2 domains · warmup since Jul 27 · reply→Telegram webhook <b>live</b></div>
+    </div>
+    <div class="card">
+      <div class="stat">15,129</div>
+      <div class="lbl">DealMachine credits left</div>
+      <div class="det">of 20,000 — resets <b>Aug 31</b>, no rollover. Batch #1 used 4,871</div>
+    </div>
+    <div class="card">
+      <div class="stat">34,478</div>
+      <div class="lbl">MillionVerifier credits</div>
+      <div class="det">Batch #1 used 1,392 (unknowns free)</div>
     </div>
   </div>
 
-  <div class="card">
-    <span class="step">Stage B — Verify-merge</span>
-    <h2>Merge MillionVerifier results → final Instantly list</h2>
-    <label class="file">Choose _toverify.csv<input type="file" id="fileB1" accept=".csv"></label>
-    <span class="filemeta" id="metaB1"></span><br>
-    <label class="file">Choose MillionVerifier results CSV<input type="file" id="fileB2" accept=".csv"></label>
-    <span class="filemeta" id="metaB2"></span>
-    <div id="beforeB" class="hidden"><div class="cap" id="capBeforeB"></div><div class="tblwrap" id="tblBeforeB"></div></div>
-    <button class="run" id="runB" disabled>Run Stage B</button>
-    <div id="outB" class="hidden">
-      <div class="stats" id="statsB"></div>
-      <div class="cap" id="capAfterB"></div>
-      <div class="tblwrap" id="tblAfterB"></div>
-      <button class="dl" id="dlB">⬇ Download _instantly.csv → upload to Instantly</button>
+  <div class="grid">
+    <div class="card">
+      <h2>✅ This week (Vlad)</h2>
+      <ul class="check">
+        <li>👀 Eyeball Instantly: lead variables in preview + schedule shows Tue/Wed/Thu <span class="when">before Aug 16 · ~10 min</span></li>
+        <li>🧪 Placement test (2 free) — target ≥ 90% inbox <span class="when">Aug 16 · Telegram checklist arrives 9:00</span></li>
+        <li>🚀 Press Start on all 4 campaigns <span class="when">Aug 18 · Telegram go-message arrives 8:00</span></li>
+      </ul>
+    </div>
+    <div class="card">
+      <h2>🤖 Automation calendar</h2>
+      <table class="cal">
+        <tr><th>Aug 16, 9:00</th><td>Placement-test day: verify + checklist ping</td></tr>
+        <tr><th>Aug 18, 8:00</th><td>Launch day: verify + "press Start" ping</td></tr>
+        <tr><th>Aug 25, 9:00</th><td>Ramp → 15/day (only if bounce &lt; 3%)</td></tr>
+        <tr><th>Sep 1, 9:00</th><td>Ramp → 28/day (same gate)</td></tr>
+        <tr><th>1st monthly, 9:30</th><td>Scoreboard + new-lead pull proposal (asks before spending)</td></tr>
+      </table>
+      <div class="muted">Tasks run while the Claude Code app is open on the Mac; if closed, they fire on next launch.</div>
     </div>
   </div>
+
+  <div class="muted">🔒 Standing rules: drafts only — Vlad sends everything · nothing billable without per-run approval ·
+  suppression is forever · no owner data on this site (row-level detail stays local, via the Inspector).</div>
 </div>
 
 <script>
 "use strict";
-/* ===== CSV parse/serialize (RFC 4180: quotes, escaped quotes, newlines in fields) ===== */
-function parseCSV(text) {
-  const rows = []; let row = [], cur = "", inQ = false;
-  if (text.charCodeAt(0) === 0xFEFF) text = text.slice(1);
-  for (let i = 0; i < text.length; i++) {
-    const c = text[i];
-    if (inQ) {
-      if (c === '"') { if (text[i+1] === '"') { cur += '"'; i++; } else inQ = false; }
-      else cur += c;
-    } else if (c === '"') inQ = true;
-    else if (c === ',') { row.push(cur); cur = ""; }
-    else if (c === '\n' || c === '\r') {
-      if (c === '\r' && text[i+1] === '\n') i++;
-      row.push(cur); cur = "";
-      if (row.length > 1 || row[0] !== "") rows.push(row);
-      row = [];
-    } else cur += c;
-  }
-  if (cur !== "" || row.length) { row.push(cur); rows.push(row); }
-  if (!rows.length) return { headers: [], rows: [] };
-  const headers = rows[0];
-  return { headers, rows: rows.slice(1).map(r => {
-    const o = {}; headers.forEach((h, j) => o[h] = r[j] ?? ""); return o; }) };
-}
-function toCSV(headers, rows) {
-  const esc = v => { v = String(v ?? ""); return /[",\n\r]/.test(v) ? '"' + v.replace(/"/g, '""') + '"' : v; };
-  return [headers.map(esc).join(",")].concat(rows.map(r => headers.map(h => esc(r[h])).join(","))).join("\r\n");
-}
-
-/* ===== shared helpers (mirrors clean_list.py) ===== */
-const TRUTHY = ["y","yes","true","1","vacant"];
-const norm = h => (h || "").trim().toLowerCase().replace(/[^a-z0-9]/g, "_");
-function findCol(headers, ...pats) {
-  for (const p of pats) { const re = new RegExp(p);
-    for (const h of headers) if (re.test(norm(h))) return h; }
-  return null;
-}
-function lotSf(val, colname) {
-  const s = String(val ?? "").replace(/,/g, "").trim(); const f = parseFloat(s);
-  if (isNaN(f)) return s;
-  if ((colname || "").toLowerCase().includes("acre") || f < 20) return (Math.round(f * 4356) * 10).toLocaleString("en-US");
-  return Math.round(f).toLocaleString("en-US");
-}
-const titleCase = s => s.replace(/\S+/g, w => w[0].toUpperCase() + w.slice(1).toLowerCase());
-function streetName(addr) {
-  let street = String(addr || "").split(",")[0];
-  const m = street.match(/^\s*\d+\s+(.*)/);
-  return titleCase((m ? m[1] : street).trim());
-}
-const isTrustlike = n => /\btrust\b|\bllc\b|\btr$|\bestate\b|\binc\b/.test((n || "").toLowerCase());
-const shortAddress = addr => titleCase(String(addr || "").split(",")[0].trim());
-function yearsOwned(val) {
-  // v2 copy renders "owned the property about {{years_owned}} years" — must be a NUMBER.
-  const s = String(val ?? "").trim();
-  if (!s) return "";
-  if (/^\d{1,2}$/.test(s)) return s;
-  const d = new Date(s);
-  if (!isNaN(d)) {
-    const yrs = Math.floor((Date.now() - d.getTime()) / (365.25 * 24 * 3600 * 1000));
-    return String(Math.max(yrs, 0));
-  }
-  return "";
-}
-
-/* ===== Stage A: pure expansion — NO rows dropped, no filters ===== */
-function stageA(headers, rows) {
-  const hmap = {
-    first: findCol(headers, "^first_name$", "owner.*first"),
-    last: findCol(headers, "^last_name$", "owner.*last"),
-    owner1: findCol(headers, "^owner_1_full_name$"),
-    prop: findCol(headers, "property_address_line_1", "property_address_full", "^property_address$", "^full_address$", "^address$"),
-    mail: findCol(headers, "mailing_address_line_1", "owner.*mailing", "^mailing_address$"),
-    occflag: findCol(headers, "^is_owner_occupied$"),
-    lot: findCol(headers, "lot_size", "lot_sf", "lot_square"),
-    yb: findCol(headers, "^year_built$"),
-    owned: findCol(headers, "years_owned", "ownership_length", "^last_sale_date$"),
-    vacant: findCol(headers, "^is_vacant_home$", "vacan"),
-    fc: findCol(headers, "^is_preforeclosure$", "^foreclosure_status$", "foreclos", "^nod", "auction"),
-    lanes: findCol(headers, "^lanes$"),
-  };
-  const uiEmailCols = headers.filter(h => /^email(_address)?(_?\d)?$/.test(norm(h))).sort((a,b)=>norm(a)<norm(b)?-1:1);
-  const apiContacts = {};
-  for (const h of headers) {
-    let m = norm(h).match(/^likely_owner_contact_(\d+)_email_address_(\d+)$/);
-    if (m) { (apiContacts[m[1]] ??= { name: null, emails: [] }).emails.push(h); continue; }
-    m = norm(h).match(/^likely_owner_contact_(\d+)_full_name$/);
-    if (m) (apiContacts[m[1]] ??= { name: null, emails: [] }).name = h;
-  }
-  Object.values(apiContacts).forEach(c => c.emails.sort((a,b)=>norm(a)<norm(b)?-1:1));
-  const isAPI = Object.keys(apiContacts).length > 0;
-
-  const stats = { properties_in: 0, rows_out: 0, extra_owner_rows: 0,
-                  properties_with_2plus_owners: 0, rows_without_email: 0,
-                  dupe_emails_removed: 0, civ1695_flagged: 0 };
-  const out = [];
-  const seen = new Set();  // exact same email twice = duplicate, keep first occurrence only
-  rows.forEach((row, i) => {
-    stats.properties_in++;
-    const prop = (row[hmap.prop] || "").trim();
-    let ownerOcc;
-    if (hmap.occflag && (row[hmap.occflag] || "").trim() !== "")
-      ownerOcc = TRUTHY.includes((row[hmap.occflag] || "").trim().toLowerCase());
-    else {
-      const mail = hmap.mail ? (row[hmap.mail] || "").trim() : "";
-      ownerOcc = !!prop && (norm(prop) === norm(mail) || !mail);
-    }
-    const fcv = hmap.fc ? String(row[hmap.fc] || "").trim().toLowerCase() : "";
-    const flag1695 = (fcv && !["0","n","no","false","none","off market"].includes(fcv) && ownerOcc) ? "YES" : "";
-    const vac = hmap.vacant ? TRUTHY.includes(String(row[hmap.vacant] || "").trim().toLowerCase()) : false;
-    const seg = vac ? "vacant" : (ownerOcc ? "owner_occupant" : "absentee");
-
-    // one entry per (contact, email); contacts with no email still get ONE row (empty email)
-    const entries = [];
-    if (isAPI) {
-      for (const n of Object.keys(apiContacts).sort((a,b)=>a-b)) {
-        const c = apiContacts[n];
-        const full = c.name ? (row[c.name] || "").trim() : "";
-        let cf = "", cl = "";
-        if (full && !isTrustlike(full)) {
-          const parts = full.split(/\s+/);
-          cf = titleCase(parts[0]); cl = parts.length > 1 ? titleCase(parts[parts.length-1]) : "";
-        }
-        const found = [];
-        c.emails.forEach((col, si) => {
-          const e = (row[col] || "").trim().toLowerCase();
-          if (e && e.includes("@")) found.push([(n-1)*3 + si + 1, e]);
-        });
-        if (found.length) found.forEach(([rank, e]) => entries.push([rank, e, cf, cl, String(n), full]));
-        else if (full) entries.push([(n-1)*3 + 1, "", cf, cl, String(n), full]);
-      }
-    } else {
-      const cf = hmap.first ? titleCase((row[hmap.first] || "").trim()) : "";
-      const cl = hmap.last ? titleCase((row[hmap.last] || "").trim()) : "";
-      uiEmailCols.forEach((col, ri) => {
-        const e = (row[col] || "").trim().toLowerCase();
-        if (e && e.includes("@")) entries.push([ri + 1, e, cf, cl, "1", (cf + " " + cl).trim()]);
-      });
-      if (!entries.length) entries.push([1, "", cf, cl, "1", (cf + " " + cl).trim()]);
-    }
-    if (!entries.length) entries.push([1, "", "", "", "1", ""]);  // property with no contact data at all
-
-    const slots = new Set(entries.map(e => e[4]));
-    if (slots.size > 1) stats.properties_with_2plus_owners++;
-    if (flag1695) stats.civ1695_flagged++;
-    const emit = (rank, e, cf, cl, slot, full) => {
-      const fullname = (cf + " " + cl).trim() || full || (hmap.owner1 ? (row[hmap.owner1] || "").trim() : "");
-      const greet = (cf && !isTrustlike(fullname)) ? cf : streetName(prop);
-      if (!e) stats.rows_without_email++;
-      out.push({ owner_key: "K" + String(i).padStart(5, "0"), email: e, email_rank: rank, contact_slot: slot,
-                 greeting_name: greet || "there", first_name: cf, last_name: cl,
-                 address: shortAddress(prop),
-                 property_address: prop, street_name: streetName(prop), segment: seg,
-                 lanes: hmap.lanes ? (row[hmap.lanes] || "").trim() : "",
-                 lot_sf: lotSf(hmap.lot ? row[hmap.lot] : "", hmap.lot || ""),
-                 year_built: hmap.yb ? (row[hmap.yb] || "").trim() : "",
-                 years_owned: yearsOwned(hmap.owned ? row[hmap.owned] : ""),
-                 do_not_email_1695: flag1695 });
-      stats.rows_out++;
-    };
-    let emitted = 0;
-    for (const [rank, e, cf, cl, slot, full] of entries) {
-      if (e) {
-        if (seen.has(e)) { stats.dupe_emails_removed++; continue; }
-        seen.add(e);
-      }
-      emit(rank, e, cf, cl, slot, full); emitted++;
-    }
-    if (!emitted) {
-      // every email on this property was a duplicate — keep the property visible
-      // with one empty-email row (full-list rule: no property ever disappears)
-      const [rank, , cf, cl, slot, full] = entries[0];
-      emit(rank, "", cf, cl, slot, full);
-    }
-  });
-  stats.extra_owner_rows = stats.rows_out - stats.properties_in;
-  return { stats, out, format: isAPI ? `API export (up to ${Object.keys(apiContacts).length} contacts/property, per-contact names)` : `UI export (${uiEmailCols.length} email columns)` };
-}
-
-/* ===== Stage B: verification merge — one row per PERSON, best VALID email each ===== */
-function stageB(tvRows, mvHeaders, mvRows) {
-  const ecol = findCol(mvHeaders, "^email$", "email_address");
-  const rcol = findCol(mvHeaders, "^result$", "^status$", "quality");
-  if (!ecol || !rcol) throw new Error("Can't find email/result columns in the MillionVerifier file.");
-  const verdict = {};
-  mvRows.forEach(r => verdict[(r[ecol] || "").trim().toLowerCase()] = (r[rcol] || "").trim().toLowerCase());
-  const best = {};
-  const stats = { rows_in: tvRows.length, valid:0, invalid_or_risky:0, excluded_1695:0,
-                  persons:0, properties:0, properties_with_2plus_owners:0 };
-  for (const row of tvRows) {
-    if ((row.do_not_email_1695 || "").toUpperCase() === "YES") { stats.excluded_1695++; continue; }
-    if (!row.email) continue;
-    const v = verdict[row.email] ?? "unknown";
-    if (!["good","ok","valid","deliverable"].includes(v)) { stats.invalid_or_risky++; continue; }
-    stats.valid++;
-    const k = row.owner_key + "|" + (row.contact_slot || "1");
-    if (!(k in best) || +row.email_rank < +best[k].email_rank) best[k] = row;
-  }
-  const props = {};
-  for (const r of Object.values(best)) props[r.owner_key] = (props[r.owner_key] || 0) + 1;
-  stats.persons = Object.keys(best).length;
-  stats.properties = Object.keys(props).length;
-  stats.properties_with_2plus_owners = Object.values(props).filter(n => n > 1).length;
-  const out = Object.values(best).sort((a,b) =>
-    (a.owner_key + a.contact_slot) < (b.owner_key + b.contact_slot) ? -1 : 1);
-  return { stats, out };
-}
-
-/* ===== UI wiring ===== */
-const $ = id => document.getElementById(id);
-const state = {};
-const DROPS = new Set(["invalid_or_risky","excluded_1695"]);
-const FLAGS = new Set(["civ1695_flagged","rows_without_email"]);
-function renderStats(el, stats) {
-  el.innerHTML = Object.entries(stats).map(([k, v]) =>
-    `<div class="stat ${DROPS.has(k) ? "drop" : FLAGS.has(k) ? "flag" : "keep"}"><b>${v.toLocaleString()}</b><span>${k.replace(/_/g," ")}</span></div>`).join("");
-}
-function renderTable(el, headers, rows) {  // FULL list, scrollable, numbered rows
-  const parts = ['<table><thead><tr><th class="rownum">#</th>', ...headers.map(h => `<th>${h}</th>`), "</tr></thead><tbody>"];
-  rows.forEach((r, i) => {
-    const cls = (r.do_not_email_1695 || "").toUpperCase() === "YES" ? ' class="flagged"' : "";
-    parts.push(`<tr${cls}><td class="rownum">${i + 1}</td>`, ...headers.map(h => `<td>${String(r[h] ?? "")}</td>`), "</tr>");
-  });
-  parts.push("</tbody></table>");
-  el.innerHTML = parts.join("");
-}
-function download(name, headers, rows) {
-  const blob = new Blob([toCSV(headers, rows)], { type: "text/csv" });
-  const a = document.createElement("a");
-  a.href = URL.createObjectURL(blob); a.download = name; a.click();
-  URL.revokeObjectURL(a.href);
-}
-function readFile(input, cb) {
-  const f = input.files[0]; if (!f) return;
-  const rd = new FileReader();
-  rd.onload = () => cb(f, parseCSV(rd.result));
-  rd.readAsText(f);
-}
-
-$("fileA").addEventListener("change", () => readFile($("fileA"), (f, parsed) => {
-  state.A = parsed; state.nameA = f.name;
-  $("metaA").textContent = `${f.name} — ${parsed.rows.length.toLocaleString()} rows, ${parsed.headers.length} columns`;
-  $("capBeforeA").textContent = `BEFORE — the FULL list, all ${parsed.rows.length.toLocaleString()} rows (scroll):`;
-  renderTable($("tblBeforeA"), parsed.headers, parsed.rows);
-  $("beforeA").classList.remove("hidden");
-  $("runA").disabled = false; $("outA").classList.add("hidden");
-}));
-$("runA").addEventListener("click", () => {
-  try {
-    const res = stageA(state.A.headers, state.A.rows);
-    state.resA = res;
-    $("fmtA").textContent = "Detected format: " + res.format;
-    renderStats($("statsA"), res.stats);
-    if (res.stats.civ1695_flagged > 0) {
-      $("warnA").innerHTML = `⚠️ <b>${res.stats.civ1695_flagged} propert${res.stats.civ1695_flagged===1?"y is":"ies are"} in pre-foreclosure AND owner-occupied</b> — kept in this list (nothing is dropped) but marked <code>do_not_email_1695 = YES</code> and highlighted below. California Civ. Code §1695 makes soliciting these owners by email legally dangerous (treble damages). Stage B excludes them from the Instantly file automatically.`;
-      $("warnA").classList.remove("hidden");
-    } else $("warnA").classList.add("hidden");
-    const hdrs = res.out.length ? Object.keys(res.out[0]) : [];
-    $("capAfterA").textContent = `AFTER — the SAME list, all ${res.out.length.toLocaleString()} rows: one per owner & email, each with its own contact's name (scroll):`;
-    renderTable($("tblAfterA"), hdrs, res.out);
-    $("outA").classList.remove("hidden");
-  } catch (e) { alert(e.message); }
-});
-$("dlA").addEventListener("click", () => {
-  const hdrs = Object.keys(state.resA.out[0] || { email: 1 });
-  download(state.nameA.replace(/\.csv$/i, "") + "_toverify.csv", hdrs, state.resA.out);
-});
-
-function checkB() { $("runB").disabled = !(state.B1 && state.B2); }
-$("fileB1").addEventListener("change", () => readFile($("fileB1"), (f, parsed) => {
-  state.B1 = parsed; state.nameB1 = f.name;
-  $("metaB1").textContent = `${f.name} — ${parsed.rows.length.toLocaleString()} rows`;
-  $("capBeforeB").textContent = `BEFORE — all ${parsed.rows.length.toLocaleString()} rows going into the verification merge (scroll):`;
-  renderTable($("tblBeforeB"), parsed.headers, parsed.rows);
-  $("beforeB").classList.remove("hidden"); checkB();
-}));
-$("fileB2").addEventListener("change", () => readFile($("fileB2"), (f, parsed) => {
-  state.B2 = parsed;
-  $("metaB2").textContent = `${f.name} — ${parsed.rows.length.toLocaleString()} rows`;
-  checkB();
-}));
-$("runB").addEventListener("click", () => {
-  try {
-    const res = stageB(state.B1.rows, state.B2.headers, state.B2.rows);
-    state.resB = res;
-    renderStats($("statsB"), res.stats);
-    const hdrs = res.out.length ? Object.keys(res.out[0]) : [];
-    $("capAfterB").textContent = `AFTER — all ${res.out.length.toLocaleString()} final rows: ONE per person, best verified email each; a property with two reachable owners = two rows (scroll):`;
-    renderTable($("tblAfterB"), hdrs, res.out);
-    $("outB").classList.remove("hidden");
-  } catch (e) { alert(e.message); }
-});
-$("dlB").addEventListener("click", () => {
-  const hdrs = Object.keys(state.resB.out[0] || { email: 1 });
-  download(state.nameB1.replace(/_toverify\.csv$/i, "").replace(/\.csv$/i, "") + "_instantly.csv", hdrs, state.resB.out);
-});
+(function () {
+  const el = document.getElementById("countdown");
+  const launch = new Date("2026-08-18T08:00:00-07:00");
+  const days = Math.ceil((launch - Date.now()) / 86400000);
+  if (days > 1) el.textContent = "🚀 Launch in " + days + " days — Aug 18, 2026";
+  else if (days === 1) el.textContent = "🚀 Launch TOMORROW — Aug 18, 2026";
+  else if (days === 0) el.textContent = "🚀 LAUNCH DAY — press Start";
+  else el.textContent = "📬 Sending live since Aug 18, 2026";
+})();
 </script>
-</body>
+</div><!--hq-content--></body>
 </html>
