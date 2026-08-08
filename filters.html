@@ -126,8 +126,8 @@
   </div>
 
   <div class="never">
-    🚫 <b>Never do these — verified broken (UI and API share the same backend):</b><br>
-    <b>Lot-size filter</b> — silently removes only ~4% when it should cut ~65%; you'd *think* you filtered. Lot screening happens automatically in the pipeline instead.<br>
+    🚫 <b>Never do these — verified broken:</b><br>
+    <b>Lot-size filter</b> — CONFIRMED broken server-side by DealMachine (2026-08-08, ticket with their engineering): every threshold from 0.1–0.49 acres returns the same count, ≥0.5 returns ~zero. Keep lot screening in the pipeline until they confirm a fix. (Also: DealMachine's in-app AI chat may report counts for filters that don't exist — their support confirmed it hallucinated a "corner lot" UI filter; trust List Builder results, never AI-chat numbers.)<br>
     <b>Building Condition in Roseville</b> — Placer marks ~95% of homes Poor/Fair; matches everything.<br>
     <b>Tax Delinquent / Vacant / Probates in Roseville</b> — Placer feed has 1–15 records; wasted list.<br>
     <b>Zombie Property</b> — returns 0 everywhere; dead filter.<br>
