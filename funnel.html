@@ -36,10 +36,15 @@
   .muted { color:var(--sub); font-size:13.5px; margin-top:10px; }
   .good { color:var(--ok); font-weight:700; }
 </style>
+<style>
+  nav.topnav { margin-bottom:16px; display:flex; flex-wrap:wrap; gap:4px 16px; }
+  nav.topnav a { color:var(--accent); font-weight:700; text-decoration:none; }
+  nav.topnav a.here { color:var(--ink); border-bottom:2px solid var(--accent); pointer-events:none; }
+</style>
 </head>
 <body>
 <div class="wrap">
-  <nav><a href="index.html">🏠 Expander</a><a href="playbook.html">📋 Playbook</a><a href="scoreboard.html">📊 Scoreboard</a><a href="funnel.html">📈 Funnel</a><a href="inspector.html">🔍 Inspector</a></nav>
+  <nav class="topnav"><a href="index.html">🏠 Expander</a><a href="playbook.html">📋 Playbook</a><a href="scoreboard.html">📊 Scoreboard</a><a href="funnel.html" class="here">📈 Funnel</a><a href="inspector.html">🔍 Inspector</a><a href="history.html">📜 History</a></nav>
   <h1>📈 Funnel — DealMachine → filters → MillionVerifier → Instantly</h1>
   <div class="sub">Every batch, every drop counted — nothing silent. Claude updates this page each monthly cycle.</div>
 

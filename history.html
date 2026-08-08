@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>History — Deal-Hunter</title>
+<style>
+  :root { --bg:#f6f7f9; --card:#fff; --ink:#1a202c; --sub:#5a6472; --line:#e2e8f0;
+          --accent:#2563eb; --ok:#16a34a; --warn:#d97706; --bad:#dc2626; }
+  @media (prefers-color-scheme: dark) {
+    :root { --bg:#0f1420; --card:#1a2030; --ink:#e8ecf3; --sub:#93a0b4; --line:#2a3347;
+            --accent:#60a5fa; --ok:#4ade80; --warn:#fbbf24; --bad:#f87171; }
+  }
+  * { box-sizing:border-box; margin:0; }
+  body { font:15px/1.5 -apple-system,'Segoe UI',Roboto,sans-serif; background:var(--bg); color:var(--ink); padding:24px; }
+  .wrap { max-width:1100px; margin:0 auto; }
+  h1 { font-size:22px; margin-bottom:4px; }
+  .sub { color:var(--sub); margin-bottom:14px; }
+  .bar { display:flex; gap:8px; flex-wrap:wrap; align-items:center; margin-bottom:16px; }
+  .chip { border-radius:999px; padding:4px 13px; font-size:13px; font-weight:700; border:1px solid var(--line); cursor:pointer; background:var(--card); }
+  .chip.on { background:var(--accent); color:#fff; border-color:var(--accent); }
+  input.search { flex:1 1 220px; padding:8px 10px; border:1px solid var(--line); border-radius:8px; background:var(--card); color:var(--ink); }
+  .entry { background:var(--card); border:1px solid var(--line); border-radius:12px; padding:16px 20px; margin-bottom:14px; }
+  .entry .head { display:flex; gap:10px; flex-wrap:wrap; align-items:baseline; margin-bottom:8px; }
+  .entry .date { color:var(--sub); font-variant-numeric:tabular-nums; font-weight:700; }
+  .entry .type { font-size:11.5px; font-weight:800; text-transform:uppercase; letter-spacing:.5px;
+                 border-radius:6px; padding:2px 8px; color:#fff; background:var(--sub); }
+  .type.pull { background:#7c3aed; } .type.filter { background:var(--warn); } .type.verify { background:#0891b2; }
+  .type.upload, .type.campaign { background:var(--ok); } .type.infra { background:var(--accent); }
+  .type.decision { background:var(--bad); } .type.site { background:var(--sub); }
+  .entry .title { font-weight:800; font-size:16px; }
+  .kv { display:grid; grid-template-columns:92px 1fr; gap:3px 12px; font-size:13.8px; }
+  .kv .k { color:var(--sub); font-weight:700; }
+  .count { color:var(--sub); font-size:13.5px; }
+</style>
+<style>
+  nav.topnav { margin-bottom:16px; display:flex; flex-wrap:wrap; gap:4px 16px; }
+  nav.topnav a { color:var(--accent); font-weight:700; text-decoration:none; }
+  nav.topnav a.here { color:var(--ink); border-bottom:2px solid var(--accent); pointer-events:none; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <nav class="topnav"><a href="index.html">🏠 Expander</a><a href="playbook.html">📋 Playbook</a><a href="scoreboard.html">📊 Scoreboard</a><a href="funnel.html">📈 Funnel</a><a href="inspector.html">🔍 Inspector</a><a href="history.html" class="here">📜 History</a></nav>
+  <h1>📜 History — everything the machine has done</h1>
+  <div class="sub">One entry per operation: what ran, with which filters, what came out, what it cost. Newest first.
+  The log lives in <code>history-data.js</code> (public repo, aggregates only — never any owner data); its git history is the permanent record.</div>
+
+  <div class="bar">
+    <span class="chip on" data-t="">All</span>
+    <span class="chip" data-t="pull">Pull</span>
+    <span class="chip" data-t="filter">Filter</span>
+    <span class="chip" data-t="verify">Verify</span>
+    <span class="chip" data-t="upload">Upload</span>
+    <span class="chip" data-t="campaign">Campaign</span>
+    <span class="chip" data-t="infra">Infra</span>
+    <span class="chip" data-t="decision">Decision</span>
+    <span class="chip" data-t="site">Site</span>
+    <input class="search" id="search" placeholder="Search the log…">
+    <span class="count" id="count"></span>
+  </div>
+  <div id="log"></div>
+</div>
+
+<script src="history-data.js"></script>
+<script>
+"use strict";
+let typeFilter = "";
+const esc = s => String(s ?? "").replace(/&/g, "&amp;").replace(/</g, "&lt;");
+
+function render() {
+  const needle = document.getElementById("search").value.toLowerCase();
+  const items = HISTORY.slice().reverse().filter(e =>
+    (!typeFilter || e.type === typeFilter) &&
+    (!needle || JSON.stringify(e).toLowerCase().includes(needle)));
+  document.getElementById("count").textContent = `${items.length} of ${HISTORY.length} entries`;
+  document.getElementById("log").innerHTML = items.map(e => `
+    <div class="entry">
+      <div class="head">
+        <span class="date">${esc(e.date)}</span>
+        <span class="type ${esc(e.type)}">${esc(e.type)}</span>
+        <span class="title">${esc(e.title)}</span>
+      </div>
+      <div class="kv">
+        ${e.lists && e.lists !== "—" ? `<div class="k">Lists</div><div>${esc(e.lists)}</div>` : ""}
+        ${e.filters ? `<div class="k">Filters</div><div>${esc(e.filters)}</div>` : ""}
+        ${e.results ? `<div class="k">Results</div><div>${esc(e.results)}</div>` : ""}
+        ${e.numbers && e.numbers !== "—" ? `<div class="k">Numbers</div><div>${esc(e.numbers)}</div>` : ""}
+        ${e.notes ? `<div class="k">Notes</div><div>${esc(e.notes)}</div>` : ""}
+      </div>
+    </div>`).join("");
+}
+
+document.querySelectorAll(".chip").forEach(c => c.addEventListener("click", () => {
+  document.querySelectorAll(".chip").forEach(x => x.classList.remove("on"));
+  c.classList.add("on");
+  typeFilter = c.dataset.t;
+  render();
+}));
+document.getElementById("search").addEventListener("input", render);
+render();
+</script>
+</body>
+</html>
