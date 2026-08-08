@@ -130,4 +130,13 @@ const HISTORY = [
     numbers: "—",
     notes: "Sidebar: Monthly pipeline → 🎯 Filter Picker."
   },
+  {
+    date: "2026-08-07", type: "filter",
+    title: "Lot-filter forensics: REAL DealMachine bug confirmed, ticket drafted",
+    lists: "—",
+    filters: "API's own validation allows greater_than on NUMBER filters; official docs match our syntax exactly — yet >0.25ac → 57,451 · >0.5 → 0 · <0.25 → 0 (mutually impossible; exports prove ~63% of lots are below 0.25). Verdict: server-side search-index bug, our usage exonerated",
+    results: "no public reports found (help center, release notes, Reddit, FB) → support ticket drafted for Vlad to send to support@dealmachine.com with full repro table",
+    numbers: "0 credits (free estimates). Workaround stands: local lot gate in the pipeline (costs extra export credits vs a working server filter — stated in the ticket)",
+    notes: "Draft: skill references/dealmachine-support-ticket-2026-08-07.md — Vlad sends (drafts-only rule)."
+  },
 ];
