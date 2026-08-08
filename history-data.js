@@ -94,4 +94,13 @@ const HISTORY = [
     numbers: "—",
     notes: "Shell maintained by tools/list-cleaner/build_shell.py — add a page to PAGES and run it; it re-shells everything and mirrors to the deploy repo."
   },
+  {
+    date: "2026-08-07", type: "campaign",
+    title: "Copy v5 — Vlad's voice rules applied to all 4 sequences",
+    lists: "all 4 campaigns (12 emails, 16 variants incl. T1 A/B)",
+    filters: "no 'investor' anywhere · signature cut to 2 lines '— Vlad · phone' + compliance line (never 'Danilov') · first-name greeting on every touch · {{address}} FIRST in every subject · lean bodies, no intro/outro padding · fresh spin pools (4–7 slots/email) · sender display name on all 6 mailboxes → 'Vlad'",
+    results: "deployed via API + GET-verified (bodies survived the sanitizer, banned words absent). Bug fixed: pre-probate T2 used {{year_built}} — a token never uploaded (would render blank) — now uses {{years_owned}}",
+    numbers: "0 credits · campaigns still draft",
+    notes: "Operative library: skill references/email-sequences-v5.md · edit + redeploy via scripts/deploy_sequences_v5.py."
+  },
 ];
