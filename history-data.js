@@ -112,4 +112,13 @@ const HISTORY = [
     numbers: "0 credits · campaigns still draft",
     notes: "Edit + redeploy: skill scripts/deploy_sequences_v6.py (prints uniqueness math on every run)."
   },
+  {
+    date: "2026-08-07", type: "filter",
+    title: "Filter verification round + Roseville sizing (all free, 0 credits)",
+    lists: "candidates only — nothing pulled",
+    filters: "verified: booleans need operator is_boolean (undocumented) · locations = {type:zip_code, code} · lot filter STILL broken server-side (−3% instead of −65%) · relative_time exact · zombie filter dead (0) · Roseville condition data garbage (95% 'Poor/Fair') · Placer feed near-empty on tax-delq/vacant/probate",
+    results: "Roseville (95661/95678/95747): 52,582 SFRs — likely_to_move 1,097 · utility liens 672 · corner+ten15+absentee 324 · expired 270 · private_lender 245 · mechanics 146. Base-zip new signals: likely_to_move 892 · poor/unsound 748 · private_lender 393 · corner-stack 322",
+    numbers: "0 credits spent (estimate_cost dry-runs). Proposed: Pull A (Roseville ~2,500 props ≈ 6,800 cr) + Pull B (base new signals ~1,900 ≈ 5,200 cr) — awaiting Vlad's approval; credits expire Aug 31",
+    notes: "Separate signal searches merged into one list cost the same as OR (cycle dedupe) and keep lanes attribution. Playbook updated with Roseville recipes."
+  },
 ];

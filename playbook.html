@@ -74,9 +74,10 @@
     <h2><span class="n">1</span>Build lists in DealMachine — FREE</h2>
     <p><b>Find Properties → enter the 5 zips → add filters → Build List.</b> Building lists costs nothing; credits are only charged at export.</p>
     <ul>
-      <li><b>Zips (always the same):</b> <code>95608</code> <code>95610</code> <code>95621</code> <code>95628</code> <code>95662</code></li>
+      <li><b>Base zips:</b> <code>95608</code> <code>95610</code> <code>95621</code> <code>95628</code> <code>95662</code></li>
+      <li><b>Roseville expansion (added 2026-08-07):</b> <code>95661</code> <code>95678</code> <code>95747</code> — 52,582 SFRs. ⚠️ Placer's data feed is WEAK on Tax Delinquent / Vacant / Probate (1–15 records — don't bother) and its Building Condition field is garbage (95% marked Poor/Fair — never use condition there). What works in Roseville: <b>Likely to Move (1,097)</b> · <b>Utility liens (672)</b> · <b>Corner+Tenure+Absentee (324)</b> · <b>Expired (270)</b> · <b>Private-Lender (245)</b> · <b>Mechanics (146)</b> — sized live 2026-08-07</li>
       <li><b>Property Type = Single Family</b> (Multi Family only for the tired-landlord list)</li>
-      <li><b>ONE motivation signal per list</b> — never mix signals, or you can't tell later which one produced the replies</li>
+      <li><b>ONE motivation signal per list</b> — never mix signals, or you can't tell later which one produced the replies. (Several lists can feed ONE combined pull later — DealMachine dedupes repeat access within the billing cycle, so separate signal lists cost the same as one big OR list and keep attribution.)</li>
     </ul>
     <div class="tblwrap"><table>
       <tr><th>List</th><th>The ONE filter to add (exact DealMachine name)</th></tr>
@@ -88,8 +89,8 @@
       <tr><td>Mechanics Liens</td><td><b>Lien doc type</b> = MECHANICS LIEN</td></tr>
       <tr><td>Tax Liens &amp; Judgments</td><td><b>Lien doc type</b> → any of: FEDERAL TAX LIEN · STATE TAX LIEN · JUDGMENT</td></tr>
       <tr><td>Corner + Long Tenure + Absentee</td><td><b>Is Corner Lot</b> = Yes + <b>Absentee Owned</b> = Yes + <b>Last sale date</b> before ~2011</td></tr>
-      <tr><td>Poor Condition</td><td><b>Building Condition</b> → Poor · Fair · Unsound</td></tr>
-      <tr><td>Likely to Move</td><td><b>Likely To Move</b> = Yes</td></tr>
+      <tr><td>Poor Condition <span style="color:var(--sub)">(base zips ONLY — never Roseville)</span></td><td><b>Building Condition</b> → Poor · Unsound (748 tight) — adding Fair triples it to 1,956 but dilutes the signal</td></tr>
+      <tr><td>Likely to Move</td><td><b>Likely To Move</b> = Yes (base 892 · Roseville 1,097)</td></tr>
       <tr><td>Private-Lender Loan</td><td><b>Mortgage 1 Is Private Lender</b> = Yes</td></tr>
       <tr><td>Tired Landlord (multifamily)</td><td>Property Type = <b>Multi Family</b> + <b>Absentee Owned</b> = Yes</td></tr>
     </table></div>
